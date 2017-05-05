@@ -1,0 +1,35 @@
+{
+  "name": "vianetz/pdf-generator",
+  "description": "The vianetz PDF library that generates PDF documents.",
+  "version": "1.0.0",
+  "type": "library",
+  "keywords": [
+    "vianetz",
+    "pdf"
+  ],
+  "homepage": "http://www.vianetz.com",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Christoph Massmann",
+      "email": "c.massmann@vianetz.com",
+      "homepage": "http://www.vianetz.com",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "email": "support@vianetz.com"
+  },
+  "autoload": {
+    "psr-4": {
+      "Vianetz\\Pdf\\": "src/"
+    }
+  },
+  "require": {
+    "dompdf/dompdf": "0.8.*",
+    "setasign/fpdf": "1.8.*",
+    "setasign/fpdi-fpdf": "1.6.*",
+    "phpunit/phpunit": "*",
+    "zf1/zend-pdf": "1.12.*"
+  }
+}
