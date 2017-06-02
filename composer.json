@@ -27,7 +27,6 @@
   },
   "require": {
     "dompdf/dompdf": "0.8.*",
-    "setasign/fpdf": "1.8.*",
     "setasign/fpdi-fpdf": "1.6.*"
   },
   "require-dev": {
