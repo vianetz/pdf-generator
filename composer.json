@@ -1,7 +1,7 @@
 {
   "name": "vianetz/pdf-generator",
   "description": "The vianetz PDF library that generates PDF documents.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "library",
   "keywords": [
     "vianetz",
@@ -27,9 +27,12 @@
   },
   "require": {
     "dompdf/dompdf": "0.8.*",
-    "setasign/fpdf": "1.8.*",
-    "setasign/fpdi-fpdf": "1.6.*",
-    "phpunit/phpunit": "*",
-    "zf1/zend-pdf": "1.12.*"
+    "setasign/fpdi-fpdf": "1.6.*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "*"
+  },
+  "suggest": {
+    "zf1/zend-pdf": "Necessary if you want to use Zend_Pdf for merging. By default this package uses the fpdi merger."
   }
 }
