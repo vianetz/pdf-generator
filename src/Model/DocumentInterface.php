@@ -11,7 +11,7 @@
  * to license@vianetz.com so we can send you a copy immediately.
  *
  * @category    Vianetz
- * @package     Vianetz/Pdf
+ * @package     Vianetz\Pdf
  * @author      Christoph Massmann, <C.Massmann@vianetz.com>
  * @link        http://www.vianetz.com
  * @copyright   Copyright (c) since 2006 vianetz - Dipl.-Ing. C. Massmann (http://www.vianetz.com)

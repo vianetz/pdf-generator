@@ -11,7 +11,7 @@
  * to license@vianetz.com so we can send you a copy immediately.
  *
  * @category    Vianetz
- * @package     Vianetz/Pdf
+ * @package     Vianetz\Pdf
  * @author      Christoph Massmann, <C.Massmann@vianetz.com>
  * @link        http://www.vianetz.com
  * @copyright   Copyright (c) since 2006 vianetz - Dipl.-Ing. C. Massmann (http://www.vianetz.com)
@@ -19,6 +19,7 @@
  */
 
 namespace Vianetz\Pdf\Model\Generator;
+
 use Vianetz\Pdf\Model\DocumentInterface;
 
 /**
@@ -68,9 +69,6 @@ final class Dompdf extends AbstractGenerator
 
         $this->domPdf->add_info('Author', $this->config->getPdfAuthor());
         $this->domPdf->add_info('Title', $this->config->getPdfTitle());
-
-        // @todo check
-        #$this->domPdf->set_base_path(Mage::getBaseDir() . DS);
 
         return $this;
     }
