@@ -52,9 +52,12 @@ final class Fpdi extends AbstractMerger
     /**
      * Default constructor initializes the FPDI library.
      */
-    public function __construct()
+    public function __construct(\Vianetz\Pdf\Model\Config $config)
     {
         $this->fpdiModel = new \FPDI();
+
+        $this->fpdiModel->SetAuthor($config->getPdfAuthor());
+        $this->fpdiModel->SetTitle($config->getPdfTitle());
     }
 
     /**
