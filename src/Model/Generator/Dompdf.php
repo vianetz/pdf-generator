@@ -67,7 +67,7 @@ final class Dompdf extends AbstractGenerator
 
         $this->domPdf->setPaper($this->config->getPdfSize(), $this->config->getPdfOrientation());
 
-        $this->domPdf->add_info('Author', $this->config->getPdfAuthor());
+        $this->domPdf->add_info('Creator', $this->config->getPdfAuthor());
         $this->domPdf->add_info('Title', $this->config->getPdfTitle());
 
         return $this;

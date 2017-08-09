@@ -3,7 +3,7 @@ Vianetz PDF Library
 
 Facts
 -----
-- version: 1.0.1
+- version: 1.0.2
 
 Description
 -----------

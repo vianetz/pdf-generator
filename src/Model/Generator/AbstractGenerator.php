@@ -49,11 +49,14 @@ abstract class AbstractGenerator implements GeneratorInterface
     /**
      * Constructor initializes configuration values.
      *
-     * @param \Vianetz\Pdf\Model\Config $config
+     * @param \Vianetz\Pdf\Model\Config|null $config
      */
-    public function __construct(
-        \Vianetz\Pdf\Model\Config $config
-    ) {
+    public function __construct(\Vianetz\Pdf\Model\Config $config = null)
+    {
+        if (empty($config) === true) {
+            $config = new \Vianetz\Pdf\Model\Config();
+        }
+
         $this->config = $config;
 
         $this->initGenerator();
