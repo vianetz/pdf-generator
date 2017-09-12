@@ -1,7 +1,7 @@
 {
   "name": "vianetz/pdf-generator",
   "description": "The vianetz PDF library that generates PDF documents.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "library",
   "keywords": [
     "vianetz",
