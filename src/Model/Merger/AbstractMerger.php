@@ -47,7 +47,7 @@ abstract class AbstractMerger implements MergerInterface
 
             if ($pageNumber === 1 && empty($pdfBackgroundFileForFirstPage) === false) {
                 $this->importBackgroundTemplateFile($pdfBackgroundFileForFirstPage);
-            } elseif (empty($pdfBackgroundFile) === false) {
+            } elseif ($pageNumber !== 1 && empty($pdfBackgroundFile) === false) {
                 $this->importBackgroundTemplateFile($pdfBackgroundFile);
             }
 
