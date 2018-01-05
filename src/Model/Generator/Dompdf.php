@@ -45,6 +45,7 @@ final class Dompdf extends AbstractGenerator
      * @param DocumentInterface $documentModel
      *
      * @return string
+     * @throws \Exception
      */
     public function renderPdfDocument(DocumentInterface $documentModel)
     {
@@ -75,10 +76,6 @@ final class Dompdf extends AbstractGenerator
 
     /**
      * Return HTML contents for one single document that is later merged with the others.
-     *
-     * We emulate frontend store of the invoice/shipment/creditmemo so that we do not have to create templates
-     * in both frontend and adminhtml directory. Furthermore we can print invoices in frontend and backend the same way.
-     * This also implies that the localization is taken from the appropriate store.
      *
      * @param DocumentInterface $documentModel
      *

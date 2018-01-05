@@ -22,6 +22,8 @@
 
 namespace Vianetz\Pdf\Model\Merger;
 
+use Vianetz\Pdf\Model\Config;
+
 /**
  * Class Vianetz_Pdf_Model_Merger_Fpdi
  */
@@ -50,6 +52,16 @@ final class Fpdi extends AbstractMerger
     private $fpdiModel;
 
     /**
+     * @var string
+     */
+    private $orientation = self::OUTPUT_FORMAT_PORTRAIT;
+
+    /**
+     * @var string
+     */
+    private $paper = 'a4';
+
+    /**
      * Default constructor initializes the FPDI library.
      *
      * @param \Vianetz\Pdf\Model\Config|null $config
@@ -64,6 +76,14 @@ final class Fpdi extends AbstractMerger
 
         $this->fpdiModel->SetAuthor($config->getPdfAuthor());
         $this->fpdiModel->SetTitle($config->getPdfTitle());
+
+        if ($config->getPdfOrientation() === Config::PAPER_ORIENTATION_PORTRAIT) {
+            $this->orientation = self::OUTPUT_FORMAT_PORTRAIT;
+        } elseif ($config->getPdfOrientation() === Config::PAPER_ORIENTATION_LANDSCAPE) {
+            $this->orientation = self::OUTPUT_FORMAT_LANDSCAPE;
+        }
+
+        $this->paper = $config->getPdfSize();
     }
 
     /**
@@ -107,7 +127,7 @@ final class Fpdi extends AbstractMerger
      */
     public function addPage()
     {
-        $this->fpdiModel->addPage();
+        $this->fpdiModel->addPage($this->orientation, $this->paper);
 
         return $this;
     }

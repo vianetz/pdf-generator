@@ -23,9 +23,20 @@ namespace Vianetz\Pdf\Model;
 final class Config
 {
     /**
-     * @var integer
+     * @var string
      */
-    private $pdfSize = 200;
+    const PAPER_ORIENTATION_LANDSCAPE = 'landscape';
+
+    /**
+     * @var string
+     */
+    const PAPER_ORIENTATION_PORTRAIT = 'portrait';
+
+    /**
+     * @var string
+     * @see \Dompdf\Adapter\CPDF::$PAPER_SIZES
+     */
+    private $pdfSize = 'a4';
 
     /**
      * @var string
