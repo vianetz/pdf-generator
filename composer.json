@@ -1,14 +1,13 @@
 {
   "name": "vianetz/pdf-generator",
   "description": "The vianetz PDF library that generates PDF documents.",
-  "version": "1.0.3",
   "type": "library",
   "keywords": [
     "vianetz",
     "pdf"
   ],
-  "homepage": "http://www.vianetz.com",
-  "license": "proprietary",
+  "homepage": "https://www.vianetz.com",
+  "license": "free",
   "authors": [
     {
       "name": "Christoph Massmann",
@@ -33,6 +32,7 @@
     "phpunit/phpunit": "*"
   },
   "suggest": {
+    "vianetz/signaturportal-api": "Use this library to sign your generated PDF documents.",
     "zf1/zend-pdf": "Necessary if you want to use Zend_Pdf for merging. By default this package uses the fpdi merger."
   }
 }
