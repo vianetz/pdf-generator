@@ -1,10 +1,6 @@
 Vianetz PDF Library
 =====================
 
-Facts
------
-- version: 1.0.3
-
 Description
 -----------
 This library offers an easy-to-use API for PDF generation and merging.
