@@ -68,7 +68,7 @@ final class Fpdi extends AbstractMerger
      */
     public function __construct(\Vianetz\Pdf\Model\Config $config = null)
     {
-        $this->fpdiModel = new \FPDI();
+        $this->fpdiModel = new \setasign\Fpdi\Fpdi();
 
         if (empty($config) === true) {
             $config = new \Vianetz\Pdf\Model\Config();

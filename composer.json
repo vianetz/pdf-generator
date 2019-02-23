@@ -26,10 +26,10 @@
   },
   "require": {
     "dompdf/dompdf": "0.8.*",
-    "setasign/fpdi-fpdf": "1.6.*"
+    "setasign/fpdi-fpdf": "2.2.*"
   },
   "require-dev": {
-    "phpunit/phpunit": "*"
+    "phpunit/phpunit": "^7"
   },
   "suggest": {
     "vianetz/signaturportal-api": "Use this library to sign your generated PDF documents.",
