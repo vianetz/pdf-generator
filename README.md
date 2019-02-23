@@ -44,6 +44,6 @@ See also LICENSE file.
 
 Copyright
 ---------
-(c) 2008-18 vianetz
+(c) 2008-19 vianetz
 
 This Magento Extension uses Semantic Versioning - please find more information at [semver.org](http://semver.org).
