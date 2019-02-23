@@ -7,12 +7,12 @@
     "pdf"
   ],
   "homepage": "https://www.vianetz.com",
-  "license": "free",
+  "license": "GPL-3.0-or-later",
   "authors": [
     {
       "name": "Christoph Massmann",
       "email": "c.massmann@vianetz.com",
-      "homepage": "http://www.vianetz.com",
+      "homepage": "https://www.vianetz.com",
       "role": "Developer"
     }
   ],
@@ -26,10 +26,10 @@
   },
   "require": {
     "dompdf/dompdf": "0.8.*",
-    "setasign/fpdi-fpdf": "1.6.*"
+    "setasign/fpdi-fpdf": "2.2.*"
   },
   "require-dev": {
-    "phpunit/phpunit": "*"
+    "phpunit/phpunit": "^7"
   },
   "suggest": {
     "vianetz/signaturportal-api": "Use this library to sign your generated PDF documents.",
