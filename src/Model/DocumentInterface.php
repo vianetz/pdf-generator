@@ -38,14 +38,29 @@ interface DocumentInterface
     public function getPdfBackgroundFile();
 
     /**
+     * @param string $pdfFile
+     */
+    public function setPdfBackgroundFile($pdfFile);
+
+    /**
      * @return string
      */
     public function getPdfBackgroundFileForFirstPage();
 
     /**
+     * @param string $pdfFile
+     */
+    public function setPdfBackgroundFileForFirstPage($pdfFile);
+
+    /**
      * @return string
      */
     public function getPdfAttachmentFile();
+
+    /**
+     * @param string $pdfFile
+     */
+    public function setPdfAttachmentFile($pdfFile);
 
     /**
      * @return string
