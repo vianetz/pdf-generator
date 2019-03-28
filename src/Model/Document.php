@@ -70,6 +70,14 @@ class Document implements DocumentInterface
     }
 
     /**
+     * @param string $pdfFile
+     */
+    public function setPdfBackgroundFile($pdfFile)
+    {
+        $this->pdfBackgroundFile = $pdfFile;
+    }
+
+    /**
      * @return string
      */
     public function getPdfBackgroundFileForFirstPage()
@@ -78,11 +86,27 @@ class Document implements DocumentInterface
     }
 
     /**
+     * @param string $pdfFile
+     */
+    public function setPdfBackgroundFileForFirstPage($pdfFile)
+    {
+        $this->pdfBackgroundFileForFirstPage = $pdfFile;
+    }
+
+    /**
      * @return string
      */
     public function getPdfAttachmentFile()
     {
         return $this->pdfAttachmentFile;
+    }
+
+    /**
+     * @param string $pdfFile
+     */
+    public function setPdfAttachmentFile($pdfFile)
+    {
+        $this->pdfAttachmentFile = $pdfFile;
     }
 
     /**
