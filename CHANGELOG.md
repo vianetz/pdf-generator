@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.0] - 2019-03-28
+### Added
+- Added setter for pdf background templates
+
 ## [1.1.1] - 2019-02-23
 ### Added
 - Updated Fpdi library to version 2.2
