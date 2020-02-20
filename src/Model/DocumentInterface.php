@@ -39,6 +39,7 @@ interface DocumentInterface
 
     /**
      * @param string $pdfFile
+     * @return void
      */
     public function setPdfBackgroundFile($pdfFile);
 
@@ -49,6 +50,7 @@ interface DocumentInterface
 
     /**
      * @param string $pdfFile
+     * @return void
      */
     public function setPdfBackgroundFileForFirstPage($pdfFile);
 
@@ -59,6 +61,7 @@ interface DocumentInterface
 
     /**
      * @param string $pdfFile
+     * @return void
      */
     public function setPdfAttachmentFile($pdfFile);
 

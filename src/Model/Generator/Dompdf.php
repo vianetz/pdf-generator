@@ -44,7 +44,7 @@ final class Dompdf extends AbstractGenerator
      *
      * @param DocumentInterface $documentModel
      *
-     * @return string
+     * @return string|null
      * @throws \Exception
      */
     public function renderPdfDocument(DocumentInterface $documentModel)
@@ -99,7 +99,7 @@ final class Dompdf extends AbstractGenerator
     /**
      * @see \Dompdf\Options
      *
-     * @return array
+     * @return array<string,mixed>
      */
     private function getDompdfOptions()
     {

@@ -34,12 +34,12 @@ abstract class AbstractMerger implements MergerInterface
      * @param null|string $pdfBackgroundFile
      * @param null|string $pdfBackgroundFileForFirstPage
      *
-     * @return \Vianetz\Pdf\Model\Merger\AbstractMerger
+     * @return void
      */
     public function mergePdfFile($fileName, $pdfBackgroundFile = null, $pdfBackgroundFileForFirstPage = null)
     {
-        if (empty($fileName) === true || file_exists($fileName) === false) {
-            return $this;
+        if (empty($fileName) || ! file_exists($fileName)) {
+            return;
         }
 
         for ($pageNumber = 1; $pageNumber <= $this->countPages($fileName); $pageNumber++) {
@@ -53,8 +53,6 @@ abstract class AbstractMerger implements MergerInterface
 
             $this->importPageFromFile($fileName, $pageNumber);
         }
-
-        return $this;
     }
 
     /**

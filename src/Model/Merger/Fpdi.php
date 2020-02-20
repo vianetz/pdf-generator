@@ -24,9 +24,6 @@ namespace Vianetz\Pdf\Model\Merger;
 
 use Vianetz\Pdf\Model\Config;
 
-/**
- * Class Vianetz_Pdf_Model_Merger_Fpdi
- */
 final class Fpdi extends AbstractMerger
 {
     /**
@@ -47,7 +44,7 @@ final class Fpdi extends AbstractMerger
     /**
      * The FPDI model instance.
      *
-     * @var FPDI
+     * @var \setasign\Fpdi\Fpdi
      */
     private $fpdiModel;
 
@@ -61,16 +58,11 @@ final class Fpdi extends AbstractMerger
      */
     private $paper = 'a4';
 
-    /**
-     * Default constructor initializes the FPDI library.
-     *
-     * @param \Vianetz\Pdf\Model\Config|null $config
-     */
     public function __construct(\Vianetz\Pdf\Model\Config $config = null)
     {
         $this->fpdiModel = new \setasign\Fpdi\Fpdi();
 
-        if (empty($config) === true) {
+        if (empty($config)) {
             $config = new \Vianetz\Pdf\Model\Config();
         }
 

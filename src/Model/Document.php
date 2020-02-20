@@ -71,6 +71,7 @@ class Document implements DocumentInterface
 
     /**
      * @param string $pdfFile
+     * @return void
      */
     public function setPdfBackgroundFile($pdfFile)
     {
@@ -87,6 +88,7 @@ class Document implements DocumentInterface
 
     /**
      * @param string $pdfFile
+     * @return void
      */
     public function setPdfBackgroundFileForFirstPage($pdfFile)
     {
@@ -103,6 +105,7 @@ class Document implements DocumentInterface
 
     /**
      * @param string $pdfFile
+     * @return void
      */
     public function setPdfAttachmentFile($pdfFile)
     {
@@ -110,10 +113,10 @@ class Document implements DocumentInterface
     }
 
     /**
-     * @return null
+     * @return string
      */
     public function getDocumentType()
     {
-        return null;
+        return '';
     }
 }

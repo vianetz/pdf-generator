@@ -46,14 +46,14 @@ class Pdf
     /**
      * The (cached) pdf contents.
      *
-     * @var string
+     * @var string|null
      */
     private $contents;
 
     /**
      * Initialize empty array for PDF documents to print.
      *
-     * @var array
+     * @var array<\Vianetz\Pdf\Model\DocumentInterface>
      */
     private $documents = array();
 
@@ -236,13 +236,13 @@ class Pdf
             throw new Exception('TempDir ' . $this->config->getTempDir() . ' is not writable.');
         }
 
-        return $this->config->getTempDir() . DIRECTORY_SEPARATOR . uniqid(time()) . '.pdf';
+        return $this->config->getTempDir() . DIRECTORY_SEPARATOR . uniqid((string)time()) . '.pdf';
     }
 
     /**
      * Remove the temporary files specified as parameter.
      *
-     * @param array $fileNames
+     * @param array<string> $fileNames
      *
      * @return $this
      */

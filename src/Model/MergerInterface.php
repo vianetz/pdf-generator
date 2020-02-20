@@ -20,9 +20,6 @@
 
 namespace Vianetz\Pdf\Model;
 
-/**
- * Interface Vianetz_Pdf_Model_Merger_Interface
- */
 interface MergerInterface
 {
     /**
@@ -32,7 +29,7 @@ interface MergerInterface
      * @param null|string $pdfBackgroundFile
      * @param null|string $pdfBackgroundFileForFirstPage
      *
-     * @return string The merged PDF string content.
+     * @return void
      */
     public function mergePdfFile($fileName, $pdfBackgroundFile = null, $pdfBackgroundFileForFirstPage = null);
 

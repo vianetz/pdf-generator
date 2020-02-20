@@ -63,17 +63,12 @@ final class Config
      */
     private $tempDir = '';
 
-    /**
-     * Config constructor.
-     */
     public function __construct()
     {
         $this->tempDir = sys_get_temp_dir();
     }
 
-    /**
-     * @return int
-     */
+    /** @return string */
     public function getPdfSize()
     {
         return $this->pdfSize;
@@ -120,7 +115,7 @@ final class Config
     }
 
     /**
-     * @param int $pdfSize
+     * @param string $pdfSize
      * @return Config
      */
     public function setPdfSize($pdfSize)

@@ -1,0 +1,8 @@
+parameters:
+    level: 8
+    fileExtensions:
+        - php
+    paths:
+        - src/
+    excludes_analyse:
+        - src/Model/Merger/Zendpdf.php

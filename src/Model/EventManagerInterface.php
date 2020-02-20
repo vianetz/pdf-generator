@@ -29,7 +29,7 @@ interface EventManagerInterface
      * and multiple observers matching event name pattern
      *
      * @param string $eventName
-     * @param array $data
+     * @param array<mixed,mixed> $data
      * @return void
      */
     public function dispatch($eventName, array $data = []);
