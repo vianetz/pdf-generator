@@ -16,11 +16,10 @@
  * obtain it through the world-wide-web, please send an email
  * to license@vianetz.com so we can send you a copy immediately.
  *
- * @category    Vianetz
  * @package     Vianetz\Pdf
- * @author      Christoph Massmann, <C.Massmann@vianetz.com>
- * @link        http://www.vianetz.com
- * @copyright   Copyright (c) since 2006 vianetz - Dipl.-Ing. C. Massmann (http://www.vianetz.com)
+ * @author      Christoph Massmann, <cm@vianetz.com>
+ * @link        https://www.vianetz.com
+ * @copyright   Copyright (c) since 2006 vianetz - Dipl.-Ing. C. Massmann (https://www.vianetz.com)
  * @license     http://www.gnu.org/licenses/gpl-3.0.txt GNU GENERAL PUBLIC LICENSE
  */
 
@@ -176,31 +175,19 @@ class Pdf
      */
     private function renderPdfContentsForAllDocuments()
     {
-        $tmpFileNameArray = array();
+        $tmpFileNameArray = [];
         foreach ($this->documents as $documentInstance) {
-            if (!$documentInstance instanceof DocumentInterface) {
+            if (! $documentInstance instanceof DocumentInterface) {
                 continue;
             }
 
-            $this->eventManager->dispatch(
-                'vianetz_pdf_document_render_before',
-                array('document' => $documentInstance)
-            );
-            $this->eventManager->dispatch(
-                'vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_render_before',
-                array('document' => $documentInstance)
-            );
+            $this->eventManager->dispatch('vianetz_pdf_document_render_before', ['document' => $documentInstance]);
+            $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_render_before', ['document' => $documentInstance]);
 
             $pdfContents = $this->generator->renderPdfDocument($documentInstance);
 
-            $this->eventManager->dispatch(
-                'vianetz_pdf_document_render_after',
-                array('document' => $documentInstance)
-            );
-            $this->eventManager->dispatch(
-                'vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_render_after',
-                array('document' => $documentInstance)
-            );
+            $this->eventManager->dispatch('vianetz_pdf_document_render_after', ['document' => $documentInstance]);
+            $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_render_after', ['document' => $documentInstance]);
 
             $tmpFileName = $this->getTmpFilename();
             @file_put_contents($tmpFileName, $pdfContents);
@@ -209,10 +196,7 @@ class Pdf
             $this->merger->mergePdfFile($tmpFileName, $documentInstance->getPdfBackgroundFile(), $documentInstance->getPdfBackgroundFileForFirstPage());
             $this->merger->mergePdfFile($documentInstance->getPdfAttachmentFile());
 
-            $this->eventManager->dispatch(
-                'vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_merge_after',
-                array('merger' => $this->merger, 'document' => $documentInstance)
-            );
+            $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_merge_after', ['merger' => $this->merger, 'document' => $documentInstance]);
         }
 
         if (count($tmpFileNameArray) === 0) {
