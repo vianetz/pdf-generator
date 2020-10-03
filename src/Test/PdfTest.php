@@ -133,11 +133,9 @@ final class PdfTest extends TestCase
     /**
      * @return void
      */
-    public function testExceptionIfTempDirNotWritable()
+    public function testNoExceptionIfTempDirNotWritable()
     {
         @mkdir('./tmp', 0000);
-
-        $this->expectException(\Vianetz\Pdf\Exception::class);
 
         $config = new Config();
         $config->setTempDir('tmp/');
@@ -145,5 +143,7 @@ final class PdfTest extends TestCase
         $pdfMock = $this->getPdfMock($config);
         $pdfMock->addDocument($this->getDocumentMock())
             ->render();
+
+        $this->assertDirectoryNotIsWritable('tmp/');
     }
 }

@@ -21,39 +21,8 @@ namespace Vianetz\Pdf\Model\Merger;
 
 use Vianetz\Pdf\Model\MergerInterface;
 
-/**
- * Abstract merger class
- */
 abstract class AbstractMerger implements MergerInterface
 {
-    /**
-     * Merge the specified PDF file into the current file.
-     *
-     * @param string $fileName
-     * @param null|string $pdfBackgroundFile
-     * @param null|string $pdfBackgroundFileForFirstPage
-     *
-     * @return void
-     */
-    public function mergePdfFile($fileName, $pdfBackgroundFile = null, $pdfBackgroundFileForFirstPage = null)
-    {
-        if (empty($fileName) || ! file_exists($fileName)) {
-            return;
-        }
-
-        for ($pageNumber = 1; $pageNumber <= $this->countPages($fileName); $pageNumber++) {
-            $this->addPage();
-
-            if ($pageNumber === 1 && empty($pdfBackgroundFileForFirstPage) === false) {
-                $this->importBackgroundTemplateFile($pdfBackgroundFileForFirstPage);
-            } elseif ($pageNumber !== 1 && empty($pdfBackgroundFile) === false) {
-                $this->importBackgroundTemplateFile($pdfBackgroundFile);
-            }
-
-            $this->importPageFromFile($fileName, $pageNumber);
-        }
-    }
-
     /**
      * Add the background pdf (if enabled and file exists).
      *
@@ -61,9 +30,9 @@ abstract class AbstractMerger implements MergerInterface
      *
      * @return \Vianetz\Pdf\Model\Merger\AbstractMerger
      */
-    protected function importBackgroundTemplateFile($pdfBackgroundFile)
+    public function importBackgroundTemplateFile($pdfBackgroundFile)
     {
-        if (empty($pdfBackgroundFile) === true || file_exists($pdfBackgroundFile) === false) {
+        if (empty($pdfBackgroundFile) || ! file_exists($pdfBackgroundFile)) {
             return $this;
         }
 
