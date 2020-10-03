@@ -81,8 +81,10 @@ final class Fpdi extends AbstractMerger
     /**
      * Import the specified page number from the given file into the current pdf model.
      *
-     * @param string $pdfFile
+     * @param string|StreamReader $pdfFile
      * @param int $pageNumber
+     *
+     * @return void
      */
     public function importPageFromFile($pdfFile, $pageNumber)
     {
@@ -94,6 +96,8 @@ final class Fpdi extends AbstractMerger
     /**
      * @param string $pdfString
      * @param int $pageNumber
+     *
+     * @return void
      */
     public function importPageFromPdfString($pdfString, $pageNumber)
     {

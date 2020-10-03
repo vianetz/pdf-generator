@@ -22,17 +22,6 @@ namespace Vianetz\Pdf\Model;
 interface MergerInterface
 {
     /**
-     * Merge the specified PDF string into the current file.
-     *
-     * @param string $pdfString
-     * @param null|string $pdfBackgroundFile
-     * @param null|string $pdfBackgroundFileForFirstPage
-     *
-     * @return void
-     */
-    public function mergePdfFile($pdfString, $pdfBackgroundFile = null, $pdfBackgroundFileForFirstPage = null);
-
-    /**
      * Return the merged PDF contents as string.
      *
      * @return string
@@ -42,12 +31,16 @@ interface MergerInterface
     /**
      * @param string $fileName
      * @param integer $pageNumber
+     *
+     * @return void
      */
     public function importPageFromFile($fileName, $pageNumber);
 
     /**
      * @param string $pdfString
      * @param integer $pageNumber
+     *
+     * @return void
      */
     public function importPageFromPdfString($pdfString, $pageNumber);
 
@@ -62,4 +55,11 @@ interface MergerInterface
      * @return \Vianetz\Pdf\Model\MergerInterface
      */
     public function addPage();
+
+    /**
+     * @param string $pdfBackgroundFile
+     *
+     * @return void
+     */
+    public function importBackgroundTemplateFile($pdfBackgroundFile);
 }

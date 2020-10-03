@@ -25,8 +25,6 @@
 
 namespace Vianetz\Pdf\Model;
 
-use setasign\Fpdi\PdfParser\StreamReader;
-use Vianetz\Pdf\Exception;
 use Vianetz\Pdf\NoDataException;
 
 class Pdf
@@ -39,9 +37,9 @@ class Pdf
     private $generator;
 
     /**
-     * @var MergerInterface
+     * @var \Vianetz\Pdf\Model\PdfMerge
      */
-    private $merger;
+    private $pdfMerge;
 
     /**
      * The (cached) pdf contents.
@@ -71,11 +69,6 @@ class Pdf
      * Default constructor initializes pdf generator.
      *
      * A custom generator class may be injected via $this->setGenerator(), otherwise the default DomPdf generator is used.
-     *
-     * @param \Vianetz\Pdf\Model\Config $config
-     * @param \Vianetz\Pdf\Model\EventManagerInterface $eventManager
-     * @param \Vianetz\Pdf\Model\GeneratorInterface $generator
-     * @param \Vianetz\Pdf\Model\MergerInterface $merger
      */
     final public function __construct(
         Config $config,
@@ -84,7 +77,7 @@ class Pdf
         MergerInterface $merger
     ) {
         $this->generator = $generator;
-        $this->merger = $merger;
+        $this->pdfMerge = PdfMerge::createWithMerger($merger);
         $this->config = $config;
         $this->eventManager = $eventManager;
     }
@@ -172,9 +165,11 @@ class Pdf
      * Return merged pdf contents of all documents and save it to single temporary files.
      *
      * @return string
+     * @throws \Vianetz\Pdf\NoDataException
      */
     private function renderPdfContentsForAllDocuments()
     {
+        $hasData = false;
         foreach ($this->documents as $documentInstance) {
             if (! $documentInstance instanceof DocumentInterface) {
                 continue;
@@ -184,16 +179,28 @@ class Pdf
             $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_render_before', ['document' => $documentInstance]);
 
             $pdfContents = $this->generator->renderPdfDocument($documentInstance);
+            if (empty($pdfContents)) {
+                continue;
+            }
+
+            $hasData = true;
 
             $this->eventManager->dispatch('vianetz_pdf_document_render_after', ['document' => $documentInstance]);
             $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_render_after', ['document' => $documentInstance]);
 
-            $this->merger->mergePdfFile($pdfContents, $documentInstance->getPdfBackgroundFile(), $documentInstance->getPdfBackgroundFileForFirstPage());
-            $this->merger->mergePdfFile($documentInstance->getPdfAttachmentFile());
+            $this->pdfMerge->mergePdfString($pdfContents, $documentInstance->getPdfBackgroundFile(), $documentInstance->getPdfBackgroundFileForFirstPage());
 
-            $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_merge_after', ['merger' => $this->merger, 'document' => $documentInstance]);
+            if (! empty($documentInstance->getPdfAttachmentFile())) {
+                $this->pdfMerge->mergePdfFile($documentInstance->getPdfAttachmentFile());
+            }
+
+            $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_merge_after', ['merger' => $this->pdfMerge, 'document' => $documentInstance]);
         }
 
-        return $this->merger->getPdfContents();
+        if (! $hasData) {
+            throw new NoDataException('No data to print.');
+        }
+
+        return $this->pdfMerge->getResult();
     }
 }

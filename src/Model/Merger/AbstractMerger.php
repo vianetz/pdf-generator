@@ -24,42 +24,13 @@ use Vianetz\Pdf\Model\MergerInterface;
 abstract class AbstractMerger implements MergerInterface
 {
     /**
-     * {@inheritDoc}
-     *
-     * @param string $pdfString
-     * @param null|string $pdfBackgroundFile
-     * @param null|string $pdfBackgroundFileForFirstPage
-     *
-     * @return void
-     */
-    public function mergePdfFile($pdfString, $pdfBackgroundFile = null, $pdfBackgroundFileForFirstPage = null)
-    {
-        if (empty($pdfString)) {
-            return;
-        }
-
-        $pageCount = $this->countPages($pdfString);
-        for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
-            $this->addPage();
-
-            if ($pageNumber === 1 && ! empty($pdfBackgroundFileForFirstPage)) {
-                $this->importBackgroundTemplateFile($pdfBackgroundFileForFirstPage);
-            } elseif ($pageNumber !== 1 && ! empty($pdfBackgroundFile)) {
-                $this->importBackgroundTemplateFile($pdfBackgroundFile);
-            }
-
-            $this->importPageFromPdfString($pdfString, $pageNumber);
-        }
-    }
-
-    /**
      * Add the background pdf (if enabled and file exists).
      *
      * @param string $pdfBackgroundFile
      *
      * @return \Vianetz\Pdf\Model\Merger\AbstractMerger
      */
-    protected function importBackgroundTemplateFile($pdfBackgroundFile)
+    public function importBackgroundTemplateFile($pdfBackgroundFile)
     {
         if (empty($pdfBackgroundFile) || ! file_exists($pdfBackgroundFile)) {
             return $this;
