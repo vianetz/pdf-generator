@@ -44,6 +44,6 @@ See also LICENSE file.
 
 Copyright
 ---------
-(c) 2008-20 vianetz
+(c) since 2008 vianetz
 
 This library uses Semantic Versioning - please find more information at [semver.org](http://semver.org).
