@@ -10,13 +10,13 @@ Requirements
 - PHP >= 5.6
 
 This extension uses the DomPDF library. For license information please visit their
-website [github.com/dompdf/dompdf](https://github.com/dompdf/dompdf).
+website [github.com/dompdf/dompdf](https://github.com/dompdf/dompdf).  
 This extension uses the FPDI library. For license information please visit their
 website [github.com/Setasign/FPDI](https://github.com/Setasign/FPDI/blob/master/LICENSE.txt).
 
 Frequently Asked Questions
 --------------------------
-Please find the Frequently Asked Questions on our website [vianetz.com/en/faq](https://www.vianetz.com/en/faq).
+Please find the Frequently Asked Questions [on our website](https://www.vianetz.com/en/faq).
 
 Support
 -------
