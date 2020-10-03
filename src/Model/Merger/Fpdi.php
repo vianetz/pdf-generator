@@ -81,12 +81,23 @@ final class Fpdi extends AbstractMerger
     /**
      * Import the specified page number from the given file into the current pdf model.
      *
+     * @param string $pdfFile
      * @param int $pageNumber
      */
-    public function importPageFromFile($pageNumber)
+    public function importPageFromFile($pdfFile, $pageNumber)
     {
+        $this->fpdiModel->setSourceFile($pdfFile);
         $pageId = $this->fpdiModel->importPage($pageNumber);
         $this->fpdiModel->useTemplate($pageId);
+    }
+
+    /**
+     * @param string $pdfString
+     * @param int $pageNumber
+     */
+    public function importPageFromPdfString($pdfString, $pageNumber)
+    {
+        $this->importPageFromFile($this->createPdfStream($pdfString), $pageNumber);
     }
 
     /**
@@ -98,13 +109,13 @@ final class Fpdi extends AbstractMerger
     }
 
     /**
-     * @param string|StreamReader $fileName
+     * @param string $pdfString
      *
      * @return integer
      */
-    public function countPages($fileName)
+    public function countPages($pdfString)
     {
-        return $this->fpdiModel->setSourceFile($this->getPdf($fileName));
+        return $this->fpdiModel->setSourceFile($this->createPdfStream($pdfString));
     }
 
     /**
@@ -117,8 +128,13 @@ final class Fpdi extends AbstractMerger
         return $this;
     }
 
-    private function getPdf($fileNameOrContents)
+    /**
+     * @param string $pdfString
+     *
+     * @return \setasign\Fpdi\PdfParser\StreamReader
+     */
+    private function createPdfStream($pdfString)
     {
-        return file_exists($fileName) ? $fileName : StreamReader::createByString($fileName);
+        return StreamReader::createByString($pdfString);
     }
 }

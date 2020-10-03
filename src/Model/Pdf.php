@@ -172,11 +172,9 @@ class Pdf
      * Return merged pdf contents of all documents and save it to single temporary files.
      *
      * @return string
-     * @throws NoDataException
      */
     private function renderPdfContentsForAllDocuments()
     {
-        $tmpFileNameArray = [];
         foreach ($this->documents as $documentInstance) {
             if (! $documentInstance instanceof DocumentInterface) {
                 continue;
@@ -196,43 +194,6 @@ class Pdf
             $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_merge_after', ['merger' => $this->merger, 'document' => $documentInstance]);
         }
 
-        if (count($tmpFileNameArray) === 0) {
-            throw new NoDataException('No data to print.');
-        }
-
-        $this->deleteTmpFiles($tmpFileNameArray);
-
         return $this->merger->getPdfContents();
-    }
-
-    /**
-     * Return temporary filename for merging.
-     *
-     * @return string
-     * @throws Exception
-     */
-    private function getTmpFilename()
-    {
-        if (is_writable($this->config->getTempDir()) === false) {
-            throw new Exception('TempDir ' . $this->config->getTempDir() . ' is not writable.');
-        }
-
-        return $this->config->getTempDir() . DIRECTORY_SEPARATOR . uniqid((string)time()) . '.pdf';
-    }
-
-    /**
-     * Remove the temporary files specified as parameter.
-     *
-     * @param array<string> $fileNames
-     *
-     * @return $this
-     */
-    private function deleteTmpFiles(array $fileNames)
-    {
-        foreach ($fileNames as $fileName) {
-            @unlink($fileName);
-        }
-
-        return $this;
     }
 }
