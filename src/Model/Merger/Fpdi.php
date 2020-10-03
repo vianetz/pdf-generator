@@ -21,6 +21,7 @@
 
 namespace Vianetz\Pdf\Model\Merger;
 
+use setasign\Fpdi\PdfParser\StreamReader;
 use Vianetz\Pdf\Model\Config;
 
 final class Fpdi extends AbstractMerger
@@ -80,19 +81,12 @@ final class Fpdi extends AbstractMerger
     /**
      * Import the specified page number from the given file into the current pdf model.
      *
-     * @param string $fileName
      * @param int $pageNumber
-     *
-     * @return Fpdi
      */
-    public function importPageFromFile($fileName, $pageNumber)
+    public function importPageFromFile($pageNumber)
     {
-        $this->fpdiModel->setSourceFile($fileName);
         $pageId = $this->fpdiModel->importPage($pageNumber);
-
         $this->fpdiModel->useTemplate($pageId);
-
-        return $this;
     }
 
     /**
@@ -104,13 +98,13 @@ final class Fpdi extends AbstractMerger
     }
 
     /**
-     * @param string $fileName
+     * @param string|StreamReader $fileName
      *
      * @return integer
      */
     public function countPages($fileName)
     {
-        return $this->fpdiModel->setSourceFile($fileName);
+        return $this->fpdiModel->setSourceFile($this->getPdf($fileName));
     }
 
     /**
@@ -121,5 +115,10 @@ final class Fpdi extends AbstractMerger
         $this->fpdiModel->addPage($this->orientation, $this->paper);
 
         return $this;
+    }
+
+    private function getPdf($fileNameOrContents)
+    {
+        return file_exists($fileName) ? $fileName : StreamReader::createByString($fileName);
     }
 }

@@ -40,12 +40,9 @@ interface MergerInterface
     public function getPdfContents();
 
     /**
-     * @param string $fileName
      * @param integer $pageNumber
-     *
-     * @return \Vianetz\Pdf\Model\MergerInterface
      */
-    public function importPageFromFile($fileName, $pageNumber);
+    public function importPageFromFile($pageNumber);
 
     /**
      * @param string $fileName

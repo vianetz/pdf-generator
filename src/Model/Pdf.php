@@ -25,6 +25,7 @@
 
 namespace Vianetz\Pdf\Model;
 
+use setasign\Fpdi\PdfParser\StreamReader;
 use Vianetz\Pdf\Exception;
 use Vianetz\Pdf\NoDataException;
 
@@ -189,11 +190,7 @@ class Pdf
             $this->eventManager->dispatch('vianetz_pdf_document_render_after', ['document' => $documentInstance]);
             $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_render_after', ['document' => $documentInstance]);
 
-            $tmpFileName = $this->getTmpFilename();
-            @file_put_contents($tmpFileName, $pdfContents);
-            $tmpFileNameArray[] = $tmpFileName;
-
-            $this->merger->mergePdfFile($tmpFileName, $documentInstance->getPdfBackgroundFile(), $documentInstance->getPdfBackgroundFileForFirstPage());
+            $this->merger->mergePdfFile($pdfContents, $documentInstance->getPdfBackgroundFile(), $documentInstance->getPdfBackgroundFileForFirstPage());
             $this->merger->mergePdfFile($documentInstance->getPdfAttachmentFile());
 
             $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_merge_after', ['merger' => $this->merger, 'document' => $documentInstance]);
