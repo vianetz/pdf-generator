@@ -41,12 +41,9 @@ final class PdfTest extends TestCase
     /**
      * @return \Vianetz\Pdf\Model\Pdf
      */
-    private function getPdfMock(Config $config)
+    private function getPdfMock(Config $config = null)
     {
-        /** @var EventManagerInterface&\PHPUnit\Framework\MockObject\MockObject $eventManagerMock */
-        $eventManagerMock = $this->createMock(EventManagerInterface::class);
-
-        return PdfFactory::general()->create($config, $eventManagerMock);
+        return PdfFactory::general()->create($config);
     }
 
     /**
@@ -66,7 +63,7 @@ final class PdfTest extends TestCase
      */
     public function testAddOneDocumentIncreasesDocumentCounterByOne()
     {
-        $pdfMock = $this->getPdfMock(new Config());
+        $pdfMock = $this->getPdfMock();
         $pdfMock->addDocument($this->getDocumentMock());
 
         $this->assertEquals(1, $pdfMock->countDocuments());
@@ -77,7 +74,7 @@ final class PdfTest extends TestCase
      */
     public function testAddThreeDocumentsIncreasesDocumentCounterByThree()
     {
-        $pdfMock = $this->getPdfMock(new Config());
+        $pdfMock = $this->getPdfMock();
         $pdfMock->addDocument($this->getDocumentMock())
             ->addDocument($this->getDocumentMock())
             ->addDocument($this->getDocumentMock());
@@ -91,7 +88,7 @@ final class PdfTest extends TestCase
     public function testGetContentsReturnsExceptionIfNoDocumentsAdded()
     {
         $this->expectException(NoDataException::class);
-        $this->getPdfMock(new Config())->getContents();
+        $this->getPdfMock()->getContents();
     }
 
     /**
@@ -99,7 +96,7 @@ final class PdfTest extends TestCase
      */
     public function testGetContentsReturnsExpectedResult()
     {
-        $pdfMock = $this->getPdfMock(new Config());
+        $pdfMock = $this->getPdfMock();
         $pdfMock->addDocument($this->getDocumentMock());
 
         $this->assertNotEmpty($pdfMock->getContents());
@@ -133,11 +130,9 @@ final class PdfTest extends TestCase
     /**
      * @return void
      */
-    public function testExceptionIfTempDirNotWritable()
+    public function testNoExceptionIfTempDirNotWritable()
     {
         @mkdir('./tmp', 0000);
-
-        $this->expectException(\Vianetz\Pdf\Exception::class);
 
         $config = new Config();
         $config->setTempDir('tmp/');
@@ -145,5 +140,7 @@ final class PdfTest extends TestCase
         $pdfMock = $this->getPdfMock($config);
         $pdfMock->addDocument($this->getDocumentMock())
             ->render();
+
+        $this->assertDirectoryNotIsWritable('tmp/');
     }
 }

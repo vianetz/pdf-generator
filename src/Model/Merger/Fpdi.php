@@ -21,6 +21,7 @@
 
 namespace Vianetz\Pdf\Model\Merger;
 
+use setasign\Fpdi\PdfParser\StreamReader;
 use Vianetz\Pdf\Model\Config;
 
 final class Fpdi extends AbstractMerger
@@ -80,19 +81,27 @@ final class Fpdi extends AbstractMerger
     /**
      * Import the specified page number from the given file into the current pdf model.
      *
-     * @param string $fileName
+     * @param string|StreamReader $pdfFile
      * @param int $pageNumber
      *
-     * @return Fpdi
+     * @return void
      */
-    public function importPageFromFile($fileName, $pageNumber)
+    public function importPageFromFile($pdfFile, $pageNumber)
     {
-        $this->fpdiModel->setSourceFile($fileName);
+        $this->fpdiModel->setSourceFile($pdfFile);
         $pageId = $this->fpdiModel->importPage($pageNumber);
-
         $this->fpdiModel->useTemplate($pageId);
+    }
 
-        return $this;
+    /**
+     * @param string $pdfString
+     * @param int $pageNumber
+     *
+     * @return void
+     */
+    public function importPageFromPdfString($pdfString, $pageNumber)
+    {
+        $this->importPageFromFile($this->createPdfStream($pdfString), $pageNumber);
     }
 
     /**
@@ -104,13 +113,13 @@ final class Fpdi extends AbstractMerger
     }
 
     /**
-     * @param string $fileName
+     * @param string $pdfString
      *
      * @return integer
      */
-    public function countPages($fileName)
+    public function countPages($pdfString)
     {
-        return $this->fpdiModel->setSourceFile($fileName);
+        return $this->fpdiModel->setSourceFile($this->createPdfStream($pdfString));
     }
 
     /**
@@ -121,5 +130,15 @@ final class Fpdi extends AbstractMerger
         $this->fpdiModel->addPage($this->orientation, $this->paper);
 
         return $this;
+    }
+
+    /**
+     * @param string $pdfString
+     *
+     * @return \setasign\Fpdi\PdfParser\StreamReader
+     */
+    private function createPdfStream($pdfString)
+    {
+        return StreamReader::createByString($pdfString);
     }
 }

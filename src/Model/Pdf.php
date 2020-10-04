@@ -25,7 +25,6 @@
 
 namespace Vianetz\Pdf\Model;
 
-use Vianetz\Pdf\Exception;
 use Vianetz\Pdf\NoDataException;
 
 class Pdf
@@ -38,9 +37,9 @@ class Pdf
     private $generator;
 
     /**
-     * @var MergerInterface
+     * @var \Vianetz\Pdf\Model\PdfMerge
      */
-    private $merger;
+    private $pdfMerge;
 
     /**
      * The (cached) pdf contents.
@@ -70,11 +69,6 @@ class Pdf
      * Default constructor initializes pdf generator.
      *
      * A custom generator class may be injected via $this->setGenerator(), otherwise the default DomPdf generator is used.
-     *
-     * @param \Vianetz\Pdf\Model\Config $config
-     * @param \Vianetz\Pdf\Model\EventManagerInterface $eventManager
-     * @param \Vianetz\Pdf\Model\GeneratorInterface $generator
-     * @param \Vianetz\Pdf\Model\MergerInterface $merger
      */
     final public function __construct(
         Config $config,
@@ -83,7 +77,7 @@ class Pdf
         MergerInterface $merger
     ) {
         $this->generator = $generator;
-        $this->merger = $merger;
+        $this->pdfMerge = PdfMerge::createWithMerger($merger);
         $this->config = $config;
         $this->eventManager = $eventManager;
     }
@@ -171,11 +165,11 @@ class Pdf
      * Return merged pdf contents of all documents and save it to single temporary files.
      *
      * @return string
-     * @throws NoDataException
+     * @throws \Vianetz\Pdf\NoDataException
      */
     private function renderPdfContentsForAllDocuments()
     {
-        $tmpFileNameArray = [];
+        $hasData = false;
         foreach ($this->documents as $documentInstance) {
             if (! $documentInstance instanceof DocumentInterface) {
                 continue;
@@ -185,57 +179,28 @@ class Pdf
             $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_render_before', ['document' => $documentInstance]);
 
             $pdfContents = $this->generator->renderPdfDocument($documentInstance);
+            if (empty($pdfContents)) {
+                continue;
+            }
+
+            $hasData = true;
 
             $this->eventManager->dispatch('vianetz_pdf_document_render_after', ['document' => $documentInstance]);
             $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_render_after', ['document' => $documentInstance]);
 
-            $tmpFileName = $this->getTmpFilename();
-            @file_put_contents($tmpFileName, $pdfContents);
-            $tmpFileNameArray[] = $tmpFileName;
+            $this->pdfMerge->mergePdfString($pdfContents, $documentInstance->getPdfBackgroundFile(), $documentInstance->getPdfBackgroundFileForFirstPage());
 
-            $this->merger->mergePdfFile($tmpFileName, $documentInstance->getPdfBackgroundFile(), $documentInstance->getPdfBackgroundFileForFirstPage());
-            $this->merger->mergePdfFile($documentInstance->getPdfAttachmentFile());
+            if (! empty($documentInstance->getPdfAttachmentFile())) {
+                $this->pdfMerge->mergePdfFile($documentInstance->getPdfAttachmentFile());
+            }
 
-            $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_merge_after', ['merger' => $this->merger, 'document' => $documentInstance]);
+            $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_merge_after', ['merger' => $this->pdfMerge, 'document' => $documentInstance]);
         }
 
-        if (count($tmpFileNameArray) === 0) {
+        if (! $hasData) {
             throw new NoDataException('No data to print.');
         }
 
-        $this->deleteTmpFiles($tmpFileNameArray);
-
-        return $this->merger->getPdfContents();
-    }
-
-    /**
-     * Return temporary filename for merging.
-     *
-     * @return string
-     * @throws Exception
-     */
-    private function getTmpFilename()
-    {
-        if (is_writable($this->config->getTempDir()) === false) {
-            throw new Exception('TempDir ' . $this->config->getTempDir() . ' is not writable.');
-        }
-
-        return $this->config->getTempDir() . DIRECTORY_SEPARATOR . uniqid((string)time()) . '.pdf';
-    }
-
-    /**
-     * Remove the temporary files specified as parameter.
-     *
-     * @param array<string> $fileNames
-     *
-     * @return $this
-     */
-    private function deleteTmpFiles(array $fileNames)
-    {
-        foreach ($fileNames as $fileName) {
-            @unlink($fileName);
-        }
-
-        return $this;
+        return $this->pdfMerge->getResult();
     }
 }

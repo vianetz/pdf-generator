@@ -1,7 +1,5 @@
 <?php
 /**
- * Pdf generator abstract class
- *
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
  * The code is distributed under the GPL license.
@@ -17,27 +15,15 @@
  * @license     http://www.gnu.org/licenses/gpl-3.0.txt GNU GENERAL PUBLIC LICENSE
  */
 
-namespace Vianetz\Pdf\Model\Merger;
+namespace Vianetz\Pdf\Model;
 
-use Vianetz\Pdf\Model\MergerInterface;
-
-abstract class AbstractMerger implements MergerInterface
+final class NullEventManager implements EventManagerInterface
 {
     /**
-     * Add the background pdf (if enabled and file exists).
-     *
-     * @param string $pdfBackgroundFile
-     *
-     * @return \Vianetz\Pdf\Model\Merger\AbstractMerger
+     * {@inheritDoc}
      */
-    public function importBackgroundTemplateFile($pdfBackgroundFile)
+    public function dispatch($eventName, array $data = [])
     {
-        if (empty($pdfBackgroundFile) || ! file_exists($pdfBackgroundFile)) {
-            return $this;
-        }
-
-        $this->importPageFromFile($pdfBackgroundFile, 1); // We assume the background pdf has only one page.
-
-        return $this;
+        // do nothing
     }
 }

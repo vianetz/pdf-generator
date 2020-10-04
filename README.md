@@ -9,19 +9,32 @@ Requirements
 ------------
 - PHP >= 5.6
 
-This extension uses the DomPDF library. For license information please visit their
-website [github.com/dompdf/dompdf](https://github.com/dompdf/dompdf).
-This extension uses the FPDI library. For license information please visit their
-website [github.com/Setasign/FPDI](https://github.com/Setasign/FPDI/blob/master/LICENSE.txt).
+Usage
+-----
+```php
+// Create a new pdf instance.
+$pdf = Vianetz\Pdf\Model\PdfFactory::general()->create();
+
+// Create the document. You can return any kind of HTML content here.
+$document = new \Vianetz\Pdf\Model\Document();
+$document->setHtmlContents('<strong>Hello</strong> World!');
+ 
+// Add our document to the pdf. You can add as many documents as you like
+// as they will all be merged into one PDF file.
+$pdf->addDocument($document);
+
+// Save the resulting PDF to file test.pdf - That's it :-)
+$pdf->saveToFile('test.pdf');
+```
 
 Frequently Asked Questions
 --------------------------
-Please find the Frequently Asked Questions on our website [vianetz.com/en/faq](https://www.vianetz.com/en/faq).
+Please find the Frequently Asked Questions [on our website](https://www.vianetz.com/en/faq).
 
 Support
 -------
 If you have any issues or suggestions with this extension, please do not hesitate to
-[contact me](vianetz.com/en/contacts).
+[contact me](https://www.vianetz.com/en/contacts).
 
 Credits
 -------
@@ -32,15 +45,19 @@ Therewith credits go to:
 
 Developer
 ---------
-Christoph Massmann
-[www.vianetz.com](https://www.vianetz.com)
+Christoph Massmann  
+[www.vianetz.com](https://www.vianetz.com)  
 [@vianetz](https://twitter.com/vianetz)
 
 Licence
 -------
-[GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html)
-
+[GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html)  
 See also LICENSE file.
+
+This extension uses the DomPDF library. For license information please visit [the DomPdf
+repository](https://github.com/dompdf/dompdf).  
+This extension uses the FPDI library. For license information please visit [the FPDI
+repository](https://github.com/Setasign/FPDI/blob/master/LICENSE.txt).
 
 Copyright
 ---------

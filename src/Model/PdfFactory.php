@@ -31,13 +31,18 @@ use Vianetz\Pdf\Model\Merger\Fpdi;
 final class PdfFactory
 {
     /**
-     * @param \Vianetz\Pdf\Model\Config $config
-     * @param \Vianetz\Pdf\Model\EventManagerInterface $eventManager
-     *
      * @return \Vianetz\Pdf\Model\Pdf
      */
-    public function create(Config $config, EventManagerInterface $eventManager)
+    public function create(Config $config = null, EventManagerInterface $eventManager = null)
     {
+        if ($config === null) {
+            $config = new Config();
+        }
+
+        if ($eventManager === null) {
+            $eventManager = new NullEventManager();
+        }
+
         $generator = new Dompdf($config);
         $merger = new Fpdi();
 
