@@ -17,22 +17,41 @@
 
 namespace Vianetz\Pdf\Model;
 
-class PdfMerge
+use Vianetz\Pdf\Model\Merger\Fpdi;
+use Vianetz\Pdf\NoDataException;
+
+class PdfMerge implements PdfInterface
 {
     /** @var \Vianetz\Pdf\Model\MergerInterface */
     private $merger;
 
-    public function __construct(MergerInterface $merger)
+    /** @var int */
+    private $pageCount = 0;
+
+    public function __construct(MergerInterface $merger = null)
     {
+        if ($merger === null) {
+            $merger = new Fpdi();
+        }
+
         $this->merger = $merger;
     }
 
     /**
      * @return \Vianetz\Pdf\Model\PdfMerge
      */
-    public static function createWithMerger(MergerInterface $merger)
+    public static function create(MergerInterface $merger = null)
     {
         return new self($merger);
+    }
+
+    /**
+     * @deprecated
+     * @return \Vianetz\Pdf\Model\PdfMerge
+     */
+    public static function createWithMerger(MergerInterface $merger)
+    {
+        return self::create($merger);
     }
 
     /**
@@ -58,8 +77,8 @@ class PdfMerge
      * {@inheritDoc}
      *
      * @param string $pdfString
-     * @param null|string $pdfBackgroundFile
-     * @param null|string $pdfBackgroundFileForFirstPage
+     * @param string|null $pdfBackgroundFile
+     * @param string|null $pdfBackgroundFileForFirstPage
      *
      * @return void
      */
@@ -68,6 +87,7 @@ class PdfMerge
         $pageCount = $this->merger->countPages($pdfString);
         for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
             $this->merger->addPage();
+            $this->pageCount++;
 
             if ($pageNumber === 1 && ! empty($pdfBackgroundFileForFirstPage)) {
                 $this->merger->importBackgroundTemplateFile($pdfBackgroundFileForFirstPage);
@@ -80,10 +100,35 @@ class PdfMerge
     }
 
     /**
+     * @deprecated use self::getContents() instead
+     *
      * @return string
+     * @throws \Vianetz\Pdf\NoDataException
      */
     public function getResult()
     {
+        return $this->getContents();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    final public function getContents()
+    {
+        if ($this->pageCount === 0) {
+            throw new NoDataException('No data to print.');
+        }
+
         return $this->merger->getPdfContents();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    final public function saveToFile($fileName)
+    {
+        $pdfContents = $this->getContents();
+
+        return @file_put_contents($fileName, $pdfContents) !== false;
     }
 }

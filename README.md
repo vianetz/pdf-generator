@@ -11,6 +11,8 @@ Requirements
 
 Usage
 -----
+
+#### Create PDF document from HTML contents 
 ```php
 // Create a new pdf instance.
 $pdf = Vianetz\Pdf\Model\PdfFactory::general()->create();
@@ -25,6 +27,23 @@ $pdf->addDocument($document);
 
 // Save the resulting PDF to file test.pdf - That's it :-)
 $pdf->saveToFile('test.pdf');
+```
+
+#### Merge a PDF file and a PDF string into one PDF file
+```php
+// Load some random PDF contents
+$pdfString = file_get_contents('test1.pdf');
+
+// Setup things
+$pdf = Vianetz\Pdf\Model\PdfFactory::general()->create();
+$pdfMerge = Vianetz\Pdf\Model\PdfMerge::create();
+
+// Do the merge.
+$pdfMerge->mergePdfString($pdfString);
+$pdfMerge->mergePdfFile('test2.pdf');
+
+// Save the result PDF to file result.pdf.
+$pdfMerge->saveToFile('result.pdf');
 ```
 
 Frequently Asked Questions
