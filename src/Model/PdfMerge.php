@@ -17,20 +17,26 @@
 
 namespace Vianetz\Pdf\Model;
 
+use Vianetz\Pdf\Model\Merger\Fpdi;
+
 class PdfMerge
 {
     /** @var \Vianetz\Pdf\Model\MergerInterface */
     private $merger;
 
-    public function __construct(MergerInterface $merger)
+    public function __construct(MergerInterface $merger = null)
     {
+        if ($merger === null) {
+            $merger = new Fpdi();
+        }
+
         $this->merger = $merger;
     }
 
     /**
      * @return \Vianetz\Pdf\Model\PdfMerge
      */
-    public static function createWithMerger(MergerInterface $merger)
+    public static function create(MergerInterface $merger = null)
     {
         return new self($merger);
     }

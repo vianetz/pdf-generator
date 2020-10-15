@@ -77,7 +77,7 @@ class Pdf
         MergerInterface $merger
     ) {
         $this->generator = $generator;
-        $this->pdfMerge = PdfMerge::createWithMerger($merger);
+        $this->pdfMerge = PdfMerge::create($merger);
         $this->config = $config;
         $this->eventManager = $eventManager;
     }

@@ -19,7 +19,6 @@ namespace Vianetz\Pdf\Test;
 
 use PHPUnit\Framework\TestCase;
 use Vianetz\Pdf\Model\Config;
-use Vianetz\Pdf\Model\EventManagerInterface;
 use Vianetz\Pdf\Model\Generator\AbstractGenerator;
 use Vianetz\Pdf\Model\PdfFactory;
 use Vianetz\Pdf\NoDataException;
