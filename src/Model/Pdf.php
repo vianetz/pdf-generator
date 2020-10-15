@@ -27,7 +27,7 @@ namespace Vianetz\Pdf\Model;
 
 use Vianetz\Pdf\NoDataException;
 
-class Pdf
+class Pdf implements PdfInterface
 {
     /**
      * The generator instance.
@@ -83,39 +83,30 @@ class Pdf
     }
 
     /**
-     * Get pdf file contents as string.
-     *
-     * @api
-     * @return string
+     * {@inheritDoc}
      */
     final public function getContents()
     {
         if ($this->contents === null) {
-            $this->contents = $this->renderPdfContentsForAllDocuments();
+            $this->renderPdfContentsForAllDocuments();
+            $this->contents = $this->pdfMerge->getContents();
         }
 
         return $this->contents;
     }
 
     /**
-     * Save pdf contents to file.
-     *
-     * @param string $fileName
-     *
-     * @api
-     * @return boolean true in case of success
+     * {@inheritDoc}
      */
     final public function saveToFile($fileName)
     {
         $pdfContents = $this->getContents();
 
-        return (@file_put_contents($fileName, $pdfContents) !== false);
+        return @file_put_contents($fileName, $pdfContents) !== false;
     }
 
     /**
      * Add a new document to generate.
-     *
-     * @param DocumentInterface $documentModel
      *
      * @api
      * @return Pdf
@@ -164,7 +155,7 @@ class Pdf
     /**
      * Return merged pdf contents of all documents and save it to single temporary files.
      *
-     * @return string
+     * @return void
      * @throws \Vianetz\Pdf\NoDataException
      */
     private function renderPdfContentsForAllDocuments()
@@ -200,7 +191,5 @@ class Pdf
         if (! $hasData) {
             throw new NoDataException('No data to print.');
         }
-
-        return $this->pdfMerge->getResult();
     }
 }
