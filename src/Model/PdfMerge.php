@@ -42,6 +42,15 @@ class PdfMerge
     }
 
     /**
+     * @deprecated
+     * @return \Vianetz\Pdf\Model\PdfMerge
+     */
+    public static function createWithMerger(MergerInterface $merger)
+    {
+        return self::create($merger);
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @param string $pdfFile
