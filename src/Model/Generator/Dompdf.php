@@ -102,7 +102,8 @@ final class Dompdf extends AbstractGenerator
     {
         return array(
             'isPhpEnabled' => true,
-            'isRemoteEnabled' => true
+            'isRemoteEnabled' => true,
+            'chroot' => $this->config->getChrootDir(),
         );
     }
 }

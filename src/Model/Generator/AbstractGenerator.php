@@ -35,14 +35,10 @@ use Vianetz\Pdf\Model\GeneratorInterface;
  */
 abstract class AbstractGenerator implements GeneratorInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     const DEBUG_FILE_NAME = 'vianetz_pdf_generator_debug.html';
 
-    /**
-     * @var \Vianetz\Pdf\Model\Config $config
-     */
+    /** @var \Vianetz\Pdf\Model\Config $config */
     protected $config;
 
     /**
