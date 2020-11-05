@@ -21,14 +21,10 @@ namespace Vianetz\Pdf\Model;
 
 final class Config
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     const PAPER_ORIENTATION_LANDSCAPE = 'landscape';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     const PAPER_ORIENTATION_PORTRAIT = 'portrait';
 
     /**
@@ -37,30 +33,23 @@ final class Config
      */
     private $pdfSize = 'a4';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $pdfOrientation;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $pdfAuthor = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $pdfTitle = '';
 
-    /**
-     * @var boolean
-     */
+    /** @var boolean */
     private $isDebugMode = false;
 
-    /**
-     * @var string
-     */
-    private $tempDir = '';
+    /** @var string */
+    private $tempDir;
+
+    /** @var string */
+    private $chrootDir = '/';
 
     public function __construct()
     {
@@ -114,13 +103,20 @@ final class Config
     }
 
     /**
+     * @return string
+     */
+    public function getChrootDir()
+    {
+        return $this->chrootDir;
+    }
+
+    /**
      * @param string $pdfSize
      * @return Config
      */
     public function setPdfSize($pdfSize)
     {
         $this->pdfSize = $pdfSize;
-
         return $this;
     }
 
@@ -131,7 +127,6 @@ final class Config
     public function setPdfOrientation($pdfOrientation)
     {
         $this->pdfOrientation = $pdfOrientation;
-
         return $this;
     }
 
@@ -142,7 +137,6 @@ final class Config
     public function setPdfAuthor($pdfAuthor)
     {
         $this->pdfAuthor = $pdfAuthor;
-
         return $this;
     }
 
@@ -153,7 +147,6 @@ final class Config
     public function setPdfTitle($pdfTitle)
     {
         $this->pdfTitle = $pdfTitle;
-
         return $this;
     }
 
@@ -164,7 +157,6 @@ final class Config
     public function setIsDebugMode($isDebugMode)
     {
         $this->isDebugMode = $isDebugMode;
-
         return $this;
     }
 
@@ -175,7 +167,17 @@ final class Config
     public function setTempDir($tempDir)
     {
         $this->tempDir = $tempDir;
+        return $this;
+    }
 
+    /**
+     * @param string $chrootDir
+     *
+     * @return $this
+     */
+    public function setChrootDir($chrootDir)
+    {
+        $this->chrootDir = $chrootDir;
         return $this;
     }
 }
