@@ -31,6 +31,8 @@ use Vianetz\Pdf\Model\DocumentInterface;
  */
 final class Dompdf extends AbstractGenerator
 {
+    const TOTAL_PAGE_COUNT_PLACEHOLDER = '__PDF_TPC__';
+
     /**
      * @var \Dompdf\Dompdf
      */
@@ -50,6 +52,8 @@ final class Dompdf extends AbstractGenerator
 
         $this->domPdf->loadHtml($this->getHtmlContentsForDocument($documentModel));
         $this->domPdf->render();
+
+        $this->injectPageCount();
 
         return $this->domPdf->output();
     }
@@ -105,5 +109,20 @@ final class Dompdf extends AbstractGenerator
             'isRemoteEnabled' => true,
             'chroot' => $this->config->getChrootDir(),
         );
+    }
+
+    /**
+     * @return void
+     */
+    private function injectPageCount()
+    {
+        $canvas = $this->domPdf->getCanvas();
+        $pdf = $canvas->get_cpdf();
+
+        foreach ($pdf->objects as &$o) {
+            if ($o['t'] === 'contents') {
+                $o['c'] = str_replace(self::TOTAL_PAGE_COUNT_PLACEHOLDER, $canvas->get_page_count(), $o['c']);
+            }
+        }
     }
 }
