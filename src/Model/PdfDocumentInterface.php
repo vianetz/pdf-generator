@@ -17,42 +17,16 @@
 
 namespace Vianetz\Pdf\Model;
 
-/**
- * @todo rename to HtmlDocumentInterface
- */
-interface DocumentInterface
+interface PdfDocumentInterface
 {
     /**
-     * Return HTML file contents for conversion to PDF.
-     *
      * @return string
      */
-    public function getHtmlContents();
-
-    /**
-     * @return string
-     */
-    public function getPdfBackgroundFile();
+    public function getPdfFile();
 
     /**
      * @param string $pdfFile
      * @return void
      */
-    public function setPdfBackgroundFile($pdfFile);
-
-    /**
-     * @return string
-     */
-    public function getPdfBackgroundFileForFirstPage();
-
-    /**
-     * @param string $pdfFile
-     * @return void
-     */
-    public function setPdfBackgroundFileForFirstPage($pdfFile);
-
-    /**
-     * @return string
-     */
-    public function getDocumentType();
+    public function setPdfFile($pdfFile);
 }

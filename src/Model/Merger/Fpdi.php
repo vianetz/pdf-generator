@@ -22,58 +22,47 @@
 namespace Vianetz\Pdf\Model\Merger;
 
 use setasign\Fpdi\PdfParser\StreamReader;
+use setasign\Fpdi\Tcpdf\Fpdi as FpdiModel;
 use Vianetz\Pdf\Model\Config;
 
 final class Fpdi extends AbstractMerger
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     const OUTPUT_MODE_STRING = 'S';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     const OUTPUT_FORMAT_LANDSCAPE = 'L';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     const OUTPUT_FORMAT_PORTRAIT = 'P';
 
-    /**
-     * The FPDI model instance.
-     *
-     * @var \setasign\Fpdi\Fpdi
-     */
+    /** @var FpdiModel */
     private $fpdiModel;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $orientation = self::OUTPUT_FORMAT_PORTRAIT;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $paper = 'a4';
 
     public function __construct(\Vianetz\Pdf\Model\Config $config = null)
     {
-        $this->fpdiModel = new \setasign\Fpdi\Fpdi();
-
         if (empty($config)) {
             $config = new \Vianetz\Pdf\Model\Config();
         }
-
-        $this->fpdiModel->SetAuthor($config->getPdfAuthor());
-        $this->fpdiModel->SetTitle($config->getPdfTitle());
 
         if ($config->getPdfOrientation() === Config::PAPER_ORIENTATION_PORTRAIT) {
             $this->orientation = self::OUTPUT_FORMAT_PORTRAIT;
         } elseif ($config->getPdfOrientation() === Config::PAPER_ORIENTATION_LANDSCAPE) {
             $this->orientation = self::OUTPUT_FORMAT_LANDSCAPE;
         }
+
+        $this->fpdiModel = new FpdiModel($this->orientation, 'mm', $this->paper);
+
+        $this->fpdiModel->SetAuthor($config->getPdfAuthor());
+        $this->fpdiModel->SetTitle($config->getPdfTitle());
+        $this->fpdiModel->setPrintHeader(false);
+        $this->fpdiModel->setPrintFooter(false);
 
         $this->paper = $config->getPdfSize();
     }
@@ -109,7 +98,7 @@ final class Fpdi extends AbstractMerger
      */
     public function getPdfContents()
     {
-        return $this->fpdiModel->Output(self::OUTPUT_MODE_STRING);
+        return $this->fpdiModel->Output('', self::OUTPUT_MODE_STRING);
     }
 
     /**

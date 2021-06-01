@@ -36,9 +36,7 @@ class Pdf implements PdfInterface
      */
     private $generator;
 
-    /**
-     * @var \Vianetz\Pdf\Model\PdfMerge
-     */
+    /** @var \Vianetz\Pdf\Model\PdfMerge */
     private $pdfMerge;
 
     /**
@@ -51,18 +49,14 @@ class Pdf implements PdfInterface
     /**
      * Initialize empty array for PDF documents to print.
      *
-     * @var array<\Vianetz\Pdf\Model\DocumentInterface>
+     * @var array<\Vianetz\Pdf\Model\DocumentInterface|\Vianetz\Pdf\Model\PdfDocumentInterface>
      */
-    private $documents = array();
+    private $documents = [];
 
-    /**
-     * @var Config
-     */
+    /** @var Config */
     protected $config;
 
-    /**
-     * @var \Vianetz\Pdf\Model\EventManagerInterface
-     */
+    /** @var \Vianetz\Pdf\Model\EventManagerInterface */
     protected $eventManager;
 
     /**
@@ -108,10 +102,12 @@ class Pdf implements PdfInterface
     /**
      * Add a new document to generate.
      *
+     * @param \Vianetz\Pdf\Model\DocumentInterface|\Vianetz\Pdf\Model\PdfDocumentInterface
+     *
      * @api
      * @return Pdf
      */
-    final public function addDocument(DocumentInterface $documentModel)
+    final public function addDocument($documentModel)
     {
         $this->documents[] = $documentModel;
         // Reset cached pdf contents.
@@ -162,30 +158,31 @@ class Pdf implements PdfInterface
     {
         $hasData = false;
         foreach ($this->documents as $documentInstance) {
-            if (! $documentInstance instanceof DocumentInterface) {
-                continue;
-            }
-
             $this->eventManager->dispatch('vianetz_pdf_document_render_before', ['document' => $documentInstance]);
-            $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_render_before', ['document' => $documentInstance]);
 
-            $pdfContents = $this->generator->renderPdfDocument($documentInstance);
-            if (empty($pdfContents)) {
-                continue;
+            if ($documentInstance instanceof DocumentInterface) {
+                $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_render_before', ['document' => $documentInstance]);
+
+                $pdfContents = $this->generator->renderPdfDocument($documentInstance);
+                if (empty($pdfContents)) {
+                    continue;
+                }
+
+                $hasData = true;
+
+                $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_render_after', ['document' => $documentInstance]);
+
+                $this->pdfMerge->mergePdfString($pdfContents, $documentInstance->getPdfBackgroundFile(), $documentInstance->getPdfBackgroundFileForFirstPage());
+
+                $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_merge_after', [
+                    'merger' => $this->pdfMerge,
+                    'document' => $documentInstance,
+                ]);
+            } elseif ($documentInstance instanceof PdfDocumentInterface) {
+                $this->pdfMerge->mergePdfFile($documentInstance->getPdfFile());
             }
-
-            $hasData = true;
 
             $this->eventManager->dispatch('vianetz_pdf_document_render_after', ['document' => $documentInstance]);
-            $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_render_after', ['document' => $documentInstance]);
-
-            $this->pdfMerge->mergePdfString($pdfContents, $documentInstance->getPdfBackgroundFile(), $documentInstance->getPdfBackgroundFileForFirstPage());
-
-            if (! empty($documentInstance->getPdfAttachmentFile())) {
-                $this->pdfMerge->mergePdfFile($documentInstance->getPdfAttachmentFile());
-            }
-
-            $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_merge_after', ['merger' => $this->pdfMerge, 'document' => $documentInstance]);
         }
 
         if (! $hasData) {
