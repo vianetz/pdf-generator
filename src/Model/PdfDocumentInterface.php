@@ -15,21 +15,18 @@
  * @license     http://www.gnu.org/licenses/gpl-3.0.txt GNU GENERAL PUBLIC LICENSE
  */
 
-namespace Vianetz\Pdf\Test;
+namespace Vianetz\Pdf\Model;
 
-use PHPUnit\Framework\TestCase;
-use Vianetz\Pdf\Model\Document;
-
-final class DocumentTest extends TestCase
+interface PdfDocumentInterface
 {
     /**
+     * @return string
+     */
+    public function getPdfFile();
+
+    /**
+     * @param string $pdfFile
      * @return void
      */
-    public function testSetPdfAttachmentFile()
-    {
-        $document = new Document();
-        $document->setPdfAttachmentFile('attachment1.pdf');
-
-        $this->assertEquals('attachment1.pdf', $document->getPdfAttachmentFile());
-    }
+    public function setPdfFile($pdfFile);
 }

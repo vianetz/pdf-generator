@@ -1,7 +1,5 @@
 <?php
 /**
- * Pdf document interface class
- *
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
  * The code is distributed under the GPL license.
@@ -20,7 +18,7 @@
 namespace Vianetz\Pdf\Model;
 
 /**
- * Interface DocumentInterface
+ * @todo rename to HtmlDocumentInterface
  */
 interface DocumentInterface
 {
@@ -52,17 +50,6 @@ interface DocumentInterface
      * @return void
      */
     public function setPdfBackgroundFileForFirstPage($pdfFile);
-
-    /**
-     * @return string
-     */
-    public function getPdfAttachmentFile();
-
-    /**
-     * @param string $pdfFile
-     * @return void
-     */
-    public function setPdfAttachmentFile($pdfFile);
 
     /**
      * @return string

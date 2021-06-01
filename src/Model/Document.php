@@ -21,25 +21,14 @@ namespace Vianetz\Pdf\Model;
 
 class Document implements DocumentInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $htmlContents;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $pdfBackgroundFile = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $pdfBackgroundFileForFirstPage = '';
-
-    /**
-     * @var string
-     */
-    private $pdfAttachmentFile = '';
 
     /**
      * @param string $htmlContents
@@ -92,23 +81,6 @@ class Document implements DocumentInterface
     public function setPdfBackgroundFileForFirstPage($pdfFile)
     {
         $this->pdfBackgroundFileForFirstPage = $pdfFile;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPdfAttachmentFile()
-    {
-        return $this->pdfAttachmentFile;
-    }
-
-    /**
-     * @param string $pdfFile
-     * @return void
-     */
-    public function setPdfAttachmentFile($pdfFile)
-    {
-        $this->pdfAttachmentFile = $pdfFile;
     }
 
     /**
