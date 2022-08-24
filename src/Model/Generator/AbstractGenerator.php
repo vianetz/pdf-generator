@@ -96,6 +96,6 @@ abstract class AbstractGenerator implements GeneratorInterface
         }
 
         $debugFilename = $this->config->getTempDir() . DIRECTORY_SEPARATOR . self::DEBUG_FILE_NAME;
-        return (@file_put_contents($debugFilename, $fileContents) !== false);
+        return @file_put_contents($debugFilename, $fileContents) !== false;
     }
 }

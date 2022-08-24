@@ -7,7 +7,7 @@ This library offers an easy-to-use API for PDF generation and merging.
 
 Requirements
 ------------
-- PHP >= 5.6
+- PHP >= 7
 
 Usage
 -----

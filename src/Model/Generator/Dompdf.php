@@ -31,17 +31,13 @@ use Vianetz\Pdf\Model\DocumentInterface;
  */
 final class Dompdf extends AbstractGenerator
 {
-    const TOTAL_PAGE_COUNT_PLACEHOLDER = '__PDF_TPC__';
+    private const TOTAL_PAGE_COUNT_PLACEHOLDER = '__PDF_TPC__';
 
-    /**
-     * @var \Dompdf\Dompdf
-     */
+    /** @var \Dompdf\Dompdf */
     private $domPdf;
 
     /**
      * Render the pdf document.
-     *
-     * @param DocumentInterface $documentModel
      *
      * @return string|null
      * @throws \Exception
@@ -69,8 +65,8 @@ final class Dompdf extends AbstractGenerator
 
         $this->domPdf->setPaper($this->config->getPdfSize(), $this->config->getPdfOrientation());
 
-        $this->domPdf->add_info('Creator', $this->config->getPdfAuthor());
-        $this->domPdf->add_info('Title', $this->config->getPdfTitle());
+        $this->domPdf->addInfo('Creator', $this->config->getPdfAuthor());
+        $this->domPdf->addInfo('Title', $this->config->getPdfTitle());
 
         return $this;
     }
@@ -78,18 +74,11 @@ final class Dompdf extends AbstractGenerator
     /**
      * Return HTML contents for one single document that is later merged with the others.
      *
-     * @param DocumentInterface $documentModel
-     *
-     * @return string
      * @throws \Exception
      */
-    protected function getHtmlContentsForDocument(DocumentInterface $documentModel)
+    protected function getHtmlContentsForDocument(DocumentInterface $documentModel): string
     {
-        try {
-            $htmlContents = $documentModel->getHtmlContents();
-        } catch (\Exception $ex) {
-            throw $ex;
-        }
+        $htmlContents = $documentModel->getHtmlContents();
 
         $htmlContents = $this->replaceSpecialChars($htmlContents);
         $this->writeDebugFile($htmlContents);
@@ -111,10 +100,7 @@ final class Dompdf extends AbstractGenerator
         );
     }
 
-    /**
-     * @return void
-     */
-    private function injectPageCount()
+    private function injectPageCount(): void
     {
         $canvas = $this->domPdf->getCanvas();
         $pdf = $canvas->get_cpdf();
