@@ -26,7 +26,7 @@
   },
   "require": {
     "php": "^7|^8",
-    "dompdf/dompdf": "^0.8|^1.0|^2.0",
+    "dompdf/dompdf": "^2.0",
     "setasign/fpdi": "^2.0",
     "tecnickcom/tcpdf": "^6.4"
   },
