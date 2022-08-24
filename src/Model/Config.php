@@ -21,11 +21,8 @@ namespace Vianetz\Pdf\Model;
 
 final class Config
 {
-    /** @var string */
-    const PAPER_ORIENTATION_LANDSCAPE = 'landscape';
-
-    /** @var string */
-    const PAPER_ORIENTATION_PORTRAIT = 'portrait';
+    public const PAPER_ORIENTATION_LANDSCAPE = 'landscape';
+    public const PAPER_ORIENTATION_PORTRAIT = 'portrait';
 
     /**
      * @var string
@@ -34,7 +31,7 @@ final class Config
     private $pdfSize = 'a4';
 
     /** @var string */
-    private $pdfOrientation;
+    private $pdfOrientation = self::PAPER_ORIENTATION_PORTRAIT;
 
     /** @var string */
     private $pdfAuthor = '';
@@ -42,7 +39,7 @@ final class Config
     /** @var string */
     private $pdfTitle = '';
 
-    /** @var boolean */
+    /** @var bool */
     private $isDebugMode = false;
 
     /** @var string */
