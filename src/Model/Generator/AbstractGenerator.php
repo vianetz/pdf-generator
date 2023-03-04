@@ -82,20 +82,14 @@ abstract class AbstractGenerator implements GeneratorInterface
         return $htmlContents;
     }
 
-    /**
-     * Write the given string to debug file.
-     *
-     * @param string $fileContents
-     *
-     * @return boolean
-     */
-    protected function writeDebugFile($fileContents)
+    protected function writeDebugFile(string $fileContents): bool
     {
         if ($this->config->isDebugMode() === false) {
             return false;
         }
 
         $debugFilename = $this->config->getTempDir() . DIRECTORY_SEPARATOR . self::DEBUG_FILE_NAME;
-        return @file_put_contents($debugFilename, $fileContents) !== false;
+
+        return @file_put_contents($debugFilename, $fileContents, FILE_APPEND) !== false;
     }
 }

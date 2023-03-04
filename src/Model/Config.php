@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Vianetz Pdf Options Model
  *
@@ -24,157 +26,101 @@ final class Config
     public const PAPER_ORIENTATION_LANDSCAPE = 'landscape';
     public const PAPER_ORIENTATION_PORTRAIT = 'portrait';
 
-    /**
-     * @var string
-     * @see \Dompdf\Adapter\CPDF::$PAPER_SIZES
-     */
-    private $pdfSize = 'a4';
-
-    /** @var string */
-    private $pdfOrientation = self::PAPER_ORIENTATION_PORTRAIT;
-
-    /** @var string */
-    private $pdfAuthor = '';
-
-    /** @var string */
-    private $pdfTitle = '';
-
-    /** @var bool */
-    private $isDebugMode = false;
-
-    /** @var string */
-    private $tempDir;
-
-    /** @var string */
-    private $chrootDir = '/';
+    /** @see \Dompdf\Adapter\CPDF::$PAPER_SIZES */
+    private string $pdfSize = 'a4';
+    private string $pdfOrientation = self::PAPER_ORIENTATION_PORTRAIT;
+    private string $pdfAuthor = '';
+    private string $pdfTitle = '';
+    private bool $isDebugMode = false;
+    private string $tempDir;
+    private string $chrootDir = '/';
 
     public function __construct()
     {
         $this->tempDir = sys_get_temp_dir();
     }
 
-    /** @return string */
-    public function getPdfSize()
+    public function getPdfSize(): string
     {
         return $this->pdfSize;
     }
 
-    /**
-     * @return string
-     */
-    public function getPdfOrientation()
+    public function getPdfOrientation(): string
     {
         return $this->pdfOrientation;
     }
 
-    /**
-     * @return string
-     */
-    public function getPdfAuthor()
+    public function getPdfAuthor(): string
     {
         return $this->pdfAuthor;
     }
 
-    /**
-     * @return string
-     */
-    public function getPdfTitle()
+    public function getPdfTitle(): string
     {
         return $this->pdfTitle;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isDebugMode()
+    public function isDebugMode(): bool
     {
         return $this->isDebugMode;
     }
 
-    /**
-     * @return string
-     */
-    public function getTempDir()
+    public function getTempDir(): string
     {
         return $this->tempDir;
     }
 
-    /**
-     * @return string
-     */
-    public function getChrootDir()
+    public function getChrootDir(): string
     {
         return $this->chrootDir;
     }
 
-    /**
-     * @param string $pdfSize
-     * @return Config
-     */
-    public function setPdfSize($pdfSize)
+    public function setPdfSize(string $pdfSize): self
     {
         $this->pdfSize = $pdfSize;
+
         return $this;
     }
 
-    /**
-     * @param string $pdfOrientation
-     * @return Config
-     */
-    public function setPdfOrientation($pdfOrientation)
+    public function setPdfOrientation(string $pdfOrientation): self
     {
         $this->pdfOrientation = $pdfOrientation;
+
         return $this;
     }
 
-    /**
-     * @param string $pdfAuthor
-     * @return Config
-     */
-    public function setPdfAuthor($pdfAuthor)
+    public function setPdfAuthor(string $pdfAuthor): self
     {
         $this->pdfAuthor = $pdfAuthor;
+
         return $this;
     }
 
-    /**
-     * @param string $pdfTitle
-     * @return Config
-     */
-    public function setPdfTitle($pdfTitle)
+    public function setPdfTitle(string $pdfTitle): self
     {
         $this->pdfTitle = $pdfTitle;
+
         return $this;
     }
 
-    /**
-     * @param boolean $isDebugMode
-     * @return Config
-     */
-    public function setIsDebugMode($isDebugMode)
+    public function setIsDebugMode(bool $isDebugMode): self
     {
         $this->isDebugMode = $isDebugMode;
+
         return $this;
     }
 
-    /**
-     * @param string $tempDir
-     * @return Config
-     */
-    public function setTempDir($tempDir)
+    public function setTempDir(string $tempDir): self
     {
         $this->tempDir = $tempDir;
+
         return $this;
     }
 
-    /**
-     * @param string $chrootDir
-     *
-     * @return $this
-     */
-    public function setChrootDir($chrootDir)
+    public function setChrootDir(string $chrootDir): self
     {
         $this->chrootDir = $chrootDir;
+
         return $this;
     }
 }
