@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Pdf merger interface class
  *
@@ -19,47 +21,20 @@
 
 namespace Vianetz\Pdf\Model;
 
+use setasign\Fpdi\PdfParser\StreamReader;
+
 interface MergerInterface
 {
-    /**
-     * Return the merged PDF contents as string.
-     *
-     * @return string
-     */
-    public function getPdfContents();
+    public function getPdfContents(): string;
 
-    /**
-     * @param string $fileName
-     * @param integer $pageNumber
-     *
-     * @return void
-     */
-    public function importPageFromFile($fileName, $pageNumber);
+    /** @param string|resource|StreamReader $file */
+    public function importPageFromFile($file, int $pageNumber): void;
 
-    /**
-     * @param string $pdfString
-     * @param integer $pageNumber
-     *
-     * @return void
-     */
-    public function importPageFromPdfString($pdfString, $pageNumber);
+    public function importPageFromPdfString(string $pdfString, int $pageNumber): void;
 
-    /**
-     * @param string $fileName
-     *
-     * @return integer
-     */
-    public function countPages($fileName);
+    public function countPages(string $fileName): int;
 
-    /**
-     * @return \Vianetz\Pdf\Model\MergerInterface
-     */
-    public function addPage();
+    public function addPage(): self;
 
-    /**
-     * @param string $pdfBackgroundFile
-     *
-     * @return void
-     */
-    public function importBackgroundTemplateFile($pdfBackgroundFile);
+    public function importBackgroundTemplateFile(string $pdfBackgroundFile): void;
 }

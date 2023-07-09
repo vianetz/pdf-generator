@@ -28,28 +28,21 @@ use Vianetz\Pdf\Model\Config;
 final class Fpdi extends AbstractMerger
 {
     /** @var string */
-    const OUTPUT_MODE_STRING = 'S';
+    private const OUTPUT_MODE_STRING = 'S';
 
     /** @var string */
-    const OUTPUT_FORMAT_LANDSCAPE = 'L';
+    private const OUTPUT_FORMAT_LANDSCAPE = 'L';
 
     /** @var string */
-    const OUTPUT_FORMAT_PORTRAIT = 'P';
+    private const OUTPUT_FORMAT_PORTRAIT = 'P';
 
-    /** @var FpdiModel */
-    private $fpdiModel;
+    private FpdiModel $fpdiModel;
+    private string $orientation = self::OUTPUT_FORMAT_PORTRAIT;
+    private string $paper = 'a4';
 
-    /** @var string */
-    private $orientation = self::OUTPUT_FORMAT_PORTRAIT;
-
-    /** @var string */
-    private $paper = 'a4';
-
-    public function __construct(\Vianetz\Pdf\Model\Config $config = null)
+    public function __construct(?\Vianetz\Pdf\Model\Config $config = null)
     {
-        if (empty($config)) {
-            $config = new \Vianetz\Pdf\Model\Config();
-        }
+        $config ??= new \Vianetz\Pdf\Model\Config();
 
         if ($config->getPdfOrientation() === Config::PAPER_ORIENTATION_PORTRAIT) {
             $this->orientation = self::OUTPUT_FORMAT_PORTRAIT;
@@ -61,6 +54,7 @@ final class Fpdi extends AbstractMerger
 
         $this->fpdiModel->SetAuthor($config->getPdfAuthor());
         $this->fpdiModel->SetTitle($config->getPdfTitle());
+        $this->fpdiModel->setCreator('vianetz PDF Generator (https://github.com/vianetz/pdf-generator)');
         $this->fpdiModel->setPrintHeader(false);
         $this->fpdiModel->setPrintFooter(false);
 
@@ -70,63 +64,41 @@ final class Fpdi extends AbstractMerger
     /**
      * Import the specified page number from the given file into the current pdf model.
      *
-     * @param string|StreamReader $pdfFile
-     * @param int $pageNumber
+     * @param string|resource|StreamReader $file
      *
-     * @return void
+     * @throws \setasign\Fpdi\PdfParser\PdfParserException
+     * @throws \setasign\Fpdi\PdfReader\PdfReaderException
      */
-    public function importPageFromFile($pdfFile, $pageNumber)
+    public function importPageFromFile($file, int $pageNumber): void
     {
-        $this->fpdiModel->setSourceFile($pdfFile);
+        $this->fpdiModel->setSourceFile($file);
         $pageId = $this->fpdiModel->importPage($pageNumber);
         $this->fpdiModel->useTemplate($pageId);
     }
 
-    /**
-     * @param string $pdfString
-     * @param int $pageNumber
-     *
-     * @return void
-     */
-    public function importPageFromPdfString($pdfString, $pageNumber)
+    public function importPageFromPdfString(string $pdfString, int $pageNumber): void
     {
         $this->importPageFromFile($this->createPdfStream($pdfString), $pageNumber);
     }
 
-    /**
-     * @return string
-     */
-    public function getPdfContents()
+    public function getPdfContents(): string
     {
         return $this->fpdiModel->Output('', self::OUTPUT_MODE_STRING);
     }
 
-    /**
-     * @param string $pdfString
-     *
-     * @return integer
-     */
-    public function countPages($pdfString)
+    public function countPages(string $pdfString): int
     {
         return $this->fpdiModel->setSourceFile($this->createPdfStream($pdfString));
     }
 
-    /**
-     * @return \Vianetz\Pdf\Model\Merger\Fpdi
-     */
-    public function addPage()
+    public function addPage(): self
     {
         $this->fpdiModel->addPage($this->orientation, $this->paper);
 
         return $this;
     }
 
-    /**
-     * @param string $pdfString
-     *
-     * @return \setasign\Fpdi\PdfParser\StreamReader
-     */
-    private function createPdfStream($pdfString)
+    private function createPdfStream(string $pdfString): \setasign\Fpdi\PdfParser\StreamReader
     {
         return StreamReader::createByString($pdfString);
     }

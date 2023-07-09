@@ -25,19 +25,13 @@ abstract class AbstractMerger implements MergerInterface
 {
     /**
      * Add the background pdf (if enabled and file exists).
-     *
-     * @param string $pdfBackgroundFile
-     *
-     * @return \Vianetz\Pdf\Model\Merger\AbstractMerger
      */
-    public function importBackgroundTemplateFile($pdfBackgroundFile)
+    public function importBackgroundTemplateFile(string $pdfBackgroundFile): void
     {
         if (empty($pdfBackgroundFile) || ! file_exists($pdfBackgroundFile)) {
-            return $this;
+            return;
         }
 
         $this->importPageFromFile($pdfBackgroundFile, 1); // We assume the background pdf has only one page.
-
-        return $this;
     }
 }
