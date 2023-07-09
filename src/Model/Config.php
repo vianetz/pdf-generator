@@ -2,8 +2,6 @@
 declare(strict_types=1);
 
 /**
- * Vianetz Pdf Options Model
- *
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
  * The code is distributed under the GPL license.
@@ -32,7 +30,7 @@ final class Config
     private string $pdfAuthor = '';
     private string $pdfTitle = '';
     private bool $isDebugMode = false;
-    private string $tempDir;
+    private string $tempDir = '';
     private string $chrootDir = '/';
 
     public function __construct()
