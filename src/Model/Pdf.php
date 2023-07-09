@@ -102,12 +102,11 @@ class Pdf implements PdfInterface
     /**
      * Add a new document to generate.
      *
-     * @param \Vianetz\Pdf\Model\DocumentInterface|\Vianetz\Pdf\Model\PdfDocumentInterface
+     * @param \Vianetz\Pdf\Model\DocumentInterface|\Vianetz\Pdf\Model\PdfDocumentInterface $documentModel
      *
      * @api
-     * @return Pdf
      */
-    final public function addDocument($documentModel)
+    final public function addDocument($documentModel): self
     {
         $this->documents[] = $documentModel;
         // Reset cached pdf contents.

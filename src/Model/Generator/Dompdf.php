@@ -1,7 +1,5 @@
 <?php
 /**
- * DOMPdf generator class
- *
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
  * The code is distributed under the GPL license.
@@ -33,16 +31,10 @@ final class Dompdf extends AbstractGenerator
 {
     private const TOTAL_PAGE_COUNT_PLACEHOLDER = '__PDF_TPC__';
 
-    /** @var \Dompdf\Dompdf */
-    private $domPdf;
+    private \Dompdf\Dompdf $domPdf;
 
-    /**
-     * Render the pdf document.
-     *
-     * @return string|null
-     * @throws \Exception
-     */
-    public function renderPdfDocument(DocumentInterface $documentModel)
+    /** @throws \Exception */
+    public function renderPdfDocument(DocumentInterface $documentModel): ?string
     {
         $this->initPdf();
 
@@ -54,12 +46,7 @@ final class Dompdf extends AbstractGenerator
         return $this->domPdf->output();
     }
 
-    /**
-     * Init PDF default settings.
-     *
-     * @return Dompdf
-     */
-    protected function initPdf()
+    protected function initPdf(): self
     {
         $this->domPdf = new \Dompdf\Dompdf($this->getDompdfOptions());
 
@@ -91,23 +78,23 @@ final class Dompdf extends AbstractGenerator
      *
      * @return array<string,mixed>
      */
-    private function getDompdfOptions()
+    private function getDompdfOptions(): array
     {
-        return array(
+        return [
             'isPhpEnabled' => true,
             'isRemoteEnabled' => true,
             'chroot' => $this->config->getChrootDir(),
-        );
+        ];
     }
 
     private function injectPageCount(): void
     {
         $canvas = $this->domPdf->getCanvas();
-        $pdf = $canvas->get_cpdf();
+        $pdf = $canvas->get_cpdf(); // @phpstan-ignore-line
 
         foreach ($pdf->objects as &$o) {
             if ($o['t'] === 'contents') {
-                $o['c'] = str_replace(self::TOTAL_PAGE_COUNT_PLACEHOLDER, $canvas->get_page_count(), $o['c']);
+                $o['c'] = str_replace(self::TOTAL_PAGE_COUNT_PLACEHOLDER, (string)$canvas->get_page_count(), $o['c']);
             }
         }
     }
