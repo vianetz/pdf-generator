@@ -54,6 +54,7 @@ final class Fpdi extends AbstractMerger
 
         $this->fpdiModel->SetAuthor($config->getPdfAuthor());
         $this->fpdiModel->SetTitle($config->getPdfTitle());
+        $this->fpdiModel->setCreator('vianetz PDF Generator (https://github.com/vianetz/pdf-generator)');
         $this->fpdiModel->setPrintHeader(false);
         $this->fpdiModel->setPrintFooter(false);
 

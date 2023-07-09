@@ -30,30 +30,20 @@ use Vianetz\Pdf\Model\Merger\Fpdi;
 
 final class PdfFactory
 {
-    /**
-     * @return \Vianetz\Pdf\Model\Pdf
-     */
-    public function create(Config $config = null, EventManagerInterface $eventManager = null)
+    public function create(Config $config = null, EventManagerInterface $eventManager = null): Pdf
     {
-        if ($config === null) {
-            $config = new Config();
-        }
-
-        if ($eventManager === null) {
-            $eventManager = new NullEventManager();
-        }
+        $config ??= new Config();
+        $eventManager ??= new NullEventManager();
 
         $generator = new Dompdf($config);
-        $merger = new Fpdi();
+        $merger = new Fpdi($config);
 
         return new Pdf($config, $eventManager, $generator, $merger);
     }
 
-    /**
-     * @return static
-     */
+    /** @return static */
     public static function general()
     {
-        return new static;
+        return new static();
     }
 }
