@@ -87,15 +87,27 @@ final class Dompdf extends AbstractGenerator
         ];
     }
 
+    /** @see https://github.com/dompdf/dompdf/issues/1636#issuecomment-490372233 */
     private function injectPageCount(): void
     {
+        /** @var \Dompdf\Adapter\CPDF $canvas */
         $canvas = $this->domPdf->getCanvas();
-        $pdf = $canvas->get_cpdf(); // @phpstan-ignore-line
+
+        $search = [self::TOTAL_PAGE_COUNT_PLACEHOLDER, self::insertNullByteBeforeEachCharacter(self::TOTAL_PAGE_COUNT_PLACEHOLDER)];
+        $replace = [(string)$canvas->get_page_count(), self::insertNullByteBeforeEachCharacter((string)$canvas->get_page_count())];
+
+        $pdf = $canvas->get_cpdf();
 
         foreach ($pdf->objects as &$o) {
             if ($o['t'] === 'contents') {
-                $o['c'] = str_replace(self::TOTAL_PAGE_COUNT_PLACEHOLDER, (string)$canvas->get_page_count(), $o['c']);
+                $o['c'] = str_replace($search, $replace, $o['c']);
             }
         }
+    }
+
+    /** @see https://gist.github.com/enumag/f670865b70d11e0b8156b1e92acc3c92 */
+    private static function insertNullByteBeforeEachCharacter(string $string): string
+    {
+        return "\u{0000}" . substr(chunk_split($string, 1, "\u{0000}"), 0, -1);
     }
 }
