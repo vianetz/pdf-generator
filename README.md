@@ -1,4 +1,4 @@
-# vianetz Pdf Library
+# vianetz PDF Library
 
 This library offers an easy-to-use API for PDF generation and merging.  
 Internally it uses the DomPDF library for PDF generation and TCPDF for merging.
