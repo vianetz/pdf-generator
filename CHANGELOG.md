@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [4.0.1] - 2023-11-10
+### Fixed
+- Issue with total page count not being replaced for some font families
+
 ## [4.0.0] - 2023-07-09
 ### Changed
 - Raised minimum PHP version to 7.4
