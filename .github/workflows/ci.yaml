@@ -1,20 +1,25 @@
 name: CI
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: [ "7.4", "8.0", "8.1", "8.2", "8.3" ]
+        php-version: [ "7.4", "8.0", "8.1", "8.2", "8.3" ]
 
     steps:
     - uses: actions/checkout@v4
 
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+
     - uses: php-actions/composer@v6
       with:
-        php_version: ${{ matrix.php-versions }}
+        php_version: ${{ matrix.php-version }}
 
     - name: Run PHPUnit tests
       run: vendor/bin/phpunit
@@ -22,4 +27,4 @@ jobs:
     - uses: php-actions/phpstan@v3
       with:
         path: src/
-        php_version: ${{ matrix.php-versions }}
+        php_version: ${{ matrix.php-version }}
