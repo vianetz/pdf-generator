@@ -1,0 +1,30 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-versions: [ "7.4", "8.0", "8.1", "8.2", "8.3" ]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: php-actions/composer@v6
+      with:
+        php_version: ${{ matrix.php-versions }}
+
+    - uses: php-actions/phpunit@v3
+      with:
+        php_version: ${{ matrix.php-versions }}
+        configuration: phpunit.xml.dist
+        bootstrap: vendor/autoload.php
+        args: --no-coverage
+        test_suffix: "Test.php" # fix for https://github.com/orgs/community/discussions/126955
+
+    - uses: php-actions/phpstan@v3
+      with:
+        path: src/
+        php_version: ${{ matrix.php-versions }}
