@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [4.0.2] - 2024-10-13
+### Changed
+- Updated dompdf library to 3.x
+
 ## [4.0.1] - 2023-11-10
 ### Fixed
 - Issue with total page count not being replaced for some font families
