@@ -27,6 +27,8 @@ use Vianetz\Pdf\NoDataException;
 
 final class PdfTest extends TestCase
 {
+    private const TMP_DIR = './tmp_dir/';
+
     private function getDocumentMock(): \Vianetz\Pdf\Model\Document
     {
         /** @var \Vianetz\Pdf\Model\Document $document */
@@ -47,7 +49,7 @@ final class PdfTest extends TestCase
 
         // Remove debug file if existent
         @unlink(\Vianetz\Pdf\Model\Generator\AbstractGenerator::DEBUG_FILE_NAME);
-        @rmdir('./tmp/');
+        @rmdir(self::TMP_DIR);
     }
 
     public function testAddOneDocumentIncreasesDocumentCounterByOne(): void
@@ -103,15 +105,15 @@ final class PdfTest extends TestCase
 
     public function testNoExceptionIfTempDirNotWritable(): void
     {
-        @mkdir('./tmp', 0000);
+        @mkdir(self::TMP_DIR, 0000);
 
         $config = new Config();
-        $config->setTempDir('tmp/');
+        $config->setTempDir(self::TMP_DIR);
 
         $pdfMock = $this->getPdfMock($config);
         $pdfMock->addDocument($this->getDocumentMock())
             ->render();
 
-        $this->assertDirectoryIsNotWritable('tmp/');
+        $this->assertDirectoryIsNotWritable(self::TMP_DIR);
     }
 }
