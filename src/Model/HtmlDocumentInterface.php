@@ -23,13 +23,7 @@ interface HtmlDocumentInterface
 {
     public function getHtmlContents(): string;
 
-    public function getPdfBackgroundFile(): string;
+    public function getPdfBackgroundFile(): ?string;
 
-    public function setPdfBackgroundFile(string $pdfFile): void;
-
-    public function getPdfBackgroundFileForFirstPage(): string;
-
-    public function setPdfBackgroundFileForFirstPage(string $pdfFile): void;
-
-    public function getDocumentType(): string;
+    public function getPdfBackgroundFileForFirstPage(): ?string;
 }

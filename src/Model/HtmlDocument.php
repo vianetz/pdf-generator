@@ -22,14 +22,14 @@ namespace Vianetz\Pdf\Model;
 class HtmlDocument implements HtmlDocumentInterface
 {
     private string $htmlContents;
-    private string $pdfBackgroundFile = '';
-    private string $pdfBackgroundFileForFirstPage = '';
+    private ?string $pdfBackgroundFile = null;
+    private ?string $pdfBackgroundFileForFirstPage = null;
 
-    public function setHtmlContents(string $htmlContents): self
+    public function __construct(string $htmlContents, ?string $pdfBackgroundFile = null, ?string $pdfBackgroundFileForFirstPage = null)
     {
         $this->htmlContents = $htmlContents;
-
-        return $this;
+        $this->pdfBackgroundFile = $pdfBackgroundFile;
+        $this->pdfBackgroundFileForFirstPage = $pdfBackgroundFileForFirstPage;
     }
 
     public function getHtmlContents(): string
@@ -37,7 +37,7 @@ class HtmlDocument implements HtmlDocumentInterface
         return $this->htmlContents;
     }
 
-    public function getPdfBackgroundFile(): string
+    public function getPdfBackgroundFile(): ?string
     {
         return $this->pdfBackgroundFile;
     }
@@ -47,7 +47,7 @@ class HtmlDocument implements HtmlDocumentInterface
         $this->pdfBackgroundFile = $pdfBackgroundFile;
     }
 
-    public function getPdfBackgroundFileForFirstPage(): string
+    public function getPdfBackgroundFileForFirstPage(): ?string
     {
         return $this->pdfBackgroundFileForFirstPage;
     }
@@ -55,10 +55,5 @@ class HtmlDocument implements HtmlDocumentInterface
     public function setPdfBackgroundFileForFirstPage(string $pdfBackgroundFileForFirstPage): void
     {
         $this->pdfBackgroundFileForFirstPage = $pdfBackgroundFileForFirstPage;
-    }
-
-    public function getDocumentType(): string
-    {
-        return '';
     }
 }

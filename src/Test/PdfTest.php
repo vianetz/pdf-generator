@@ -22,6 +22,7 @@ namespace Vianetz\Pdf\Test;
 use PHPUnit\Framework\TestCase;
 use Vianetz\Pdf\Model\Config;
 use Vianetz\Pdf\Model\Generator\AbstractGenerator;
+use Vianetz\Pdf\Model\HtmlDocument;
 use Vianetz\Pdf\Model\PdfFactory;
 use Vianetz\Pdf\NoDataException;
 
@@ -29,11 +30,10 @@ final class PdfTest extends TestCase
 {
     private const TMP_DIR = './tmp_dir/';
 
-    private function getDocumentMock(): \Vianetz\Pdf\Model\HtmlDocument
+    private function getDocumentMock(): HtmlDocument
     {
         /** @var \Vianetz\Pdf\Model\HtmlDocument $document */
-        $document = new \Vianetz\Pdf\Model\HtmlDocument();
-        $document->setHtmlContents('<html><body>This is the <strong>pdf-generator</strong> test!</body></html>');
+        $document = new HtmlDocument('<html><body>This is the <strong>pdf-generator</strong> test!</body></html>');
 
         return $document;
     }

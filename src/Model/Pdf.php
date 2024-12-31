@@ -134,8 +134,6 @@ class Pdf implements PdfInterface
             $this->eventManager->dispatch('vianetz_pdf_document_render_before', ['document' => $documentInstance]);
 
             if ($documentInstance instanceof HtmlDocumentInterface) {
-                $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_render_before', ['document' => $documentInstance]);
-
                 $pdfContents = $this->generator->renderPdfDocument($documentInstance);
                 if (empty($pdfContents)) {
                     continue;
@@ -143,11 +141,9 @@ class Pdf implements PdfInterface
 
                 $hasData = true;
 
-                $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_render_after', ['document' => $documentInstance]);
-
                 $this->pdfMerge->mergePdfString($pdfContents, $documentInstance->getPdfBackgroundFile(), $documentInstance->getPdfBackgroundFileForFirstPage());
 
-                $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_merge_after', [
+                $this->eventManager->dispatch('vianetz_pdf_document_merge_after', [
                     'merger' => $this->pdfMerge,
                     'document' => $documentInstance,
                 ]);
