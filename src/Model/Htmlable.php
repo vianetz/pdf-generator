@@ -19,7 +19,7 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model;
 
-interface DocumentInterface
+interface Htmlable
 {
-    public function getContents(): string;
+    public function toHtml(): string;
 }

@@ -8,7 +8,7 @@ declare(strict_types=1);
  * Usage:
  * 1) Instantiate (optionally with your custom generator class)
  * 2) addDocument($document)
- * 3) getContents() or saveToFile()
+ * 3) toPdf() or saveToFile()
  *
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
@@ -27,18 +27,20 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model;
 
+use Vianetz\Pdf\Exception;
+use Vianetz\Pdf\Model\Generator\AbstractGenerator;
 use Vianetz\Pdf\NoDataException;
 
-class Pdf implements PdfInterface
+class Pdf implements CanSave, Pdfable
 {
-    private GeneratorInterface $generator;
+    private AbstractGenerator $generator;
     private PdfMerge $pdfMerge;
-    private ?string $contents = null;
+    private ?string $pdfContents = null;
 
     /**
      * Initialize empty array for PDF documents to print.
      *
-     * @var array<\Vianetz\Pdf\Model\HtmlDocumentInterface|\Vianetz\Pdf\Model\PdfDocumentInterface>
+     * @var list<\Vianetz\Pdf\Model\Pdfable|\Vianetz\Pdf\Model\Htmlable>
      */
     private array $documents = [];
 
@@ -53,7 +55,7 @@ class Pdf implements PdfInterface
     final public function __construct(
         Config $config,
         EventManagerInterface $eventManager,
-        GeneratorInterface $generator,
+        AbstractGenerator $generator,
         MergerInterface $merger
     ) {
         $this->generator = $generator;
@@ -63,36 +65,35 @@ class Pdf implements PdfInterface
     }
 
     /** {@inheritDoc} */
-    final public function getContents(): string
+    final public function toPdf(): string
     {
-        if ($this->contents === null) {
+        if ($this->pdfContents === null) {
             $this->renderPdfContentsForAllDocuments();
-            $this->contents = $this->pdfMerge->getContents();
+            $this->pdfContents = $this->pdfMerge->toPdf();
         }
 
-        return $this->contents;
+        $this->eventManager->dispatch('vianetz_pdf_get_contents', ['contents' => $this->pdfContents]);
+
+        return $this->pdfContents;
     }
 
     /** {@inheritDoc} */
     final public function saveToFile(string $fileName): bool
     {
-        $pdfContents = $this->getContents();
+        $pdfContents = $this->toPdf();
 
         return @file_put_contents($fileName, $pdfContents) !== false;
     }
 
     /**
-     * Add a new document to generate.
-     *
-     * @param \Vianetz\Pdf\Model\HtmlDocumentInterface|\Vianetz\Pdf\Model\PdfDocumentInterface $documentModel
-     *
      * @api
+     * @param \Vianetz\Pdf\Model\Pdfable|\Vianetz\Pdf\Model\Htmlable $documentModel
      */
     final public function addDocument($documentModel): self
     {
         $this->documents[] = $documentModel;
         // Reset cached pdf contents.
-        $this->contents = null;
+        $this->pdfContents = null;
 
         return $this;
     }
@@ -114,7 +115,7 @@ class Pdf implements PdfInterface
      */
     final public function render(): string
     {
-        return $this->getContents();
+        return $this->toPdf();
     }
 
     public function getConfig(): Config
@@ -125,7 +126,7 @@ class Pdf implements PdfInterface
     /**
      * Return merged pdf contents of all documents and save it to single temporary files.
      *
-     * @throws \Vianetz\Pdf\NoDataException
+     * @throws \Vianetz\Pdf\NoDataException|\Vianetz\Pdf\Exception
      */
     private function renderPdfContentsForAllDocuments(): void
     {
@@ -136,18 +137,24 @@ class Pdf implements PdfInterface
                 'merger' => $this->pdfMerge,
             ]);
 
-            if ($documentInstance instanceof HtmlDocumentInterface) {
-                $pdfContents = $this->generator->renderPdfDocument($documentInstance);
+            if ($documentInstance instanceof Htmlable) {
+                $pdfContents = $this->generator->convert($documentInstance->toHtml())->toPdf();
                 if (empty($pdfContents)) {
                     continue;
                 }
-
-                $hasData = true;
-
-                $this->pdfMerge->mergePdfString($pdfContents, $documentInstance->getPdfBackgroundFile(), $documentInstance->getPdfBackgroundFileForFirstPage());
-            } elseif ($documentInstance instanceof PdfDocumentInterface) {
-                $this->pdfMerge->mergePdfFile($documentInstance->getContents());
+            } elseif ($documentInstance instanceof Pdfable) {
+                $pdfContents = $documentInstance->toPdf();
+            } else {
+                throw new Exception('invalid document type');
             }
+
+            if ($documentInstance instanceof HasBackgroundPdf) {
+                $this->pdfMerge->mergePdfString($pdfContents, $documentInstance->getPdfBackgroundFile(), $documentInstance->getPdfBackgroundFileForFirstPage());
+            } else {
+                $this->pdfMerge->mergePdfString($pdfContents);
+            }
+
+            $hasData = true;
 
             $this->eventManager->dispatch('vianetz_pdf_document_render_after', [
                 'document' => $documentInstance,

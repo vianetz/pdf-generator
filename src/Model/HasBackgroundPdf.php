@@ -19,6 +19,9 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model;
 
-interface PdfDocumentInterface extends DocumentInterface
+interface HasBackgroundPdf
 {
+    public function getPdfBackgroundFile(): ?string;
+
+    public function getPdfBackgroundFileForFirstPage(): ?string;
 }

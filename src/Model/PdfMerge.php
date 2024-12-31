@@ -22,7 +22,7 @@ namespace Vianetz\Pdf\Model;
 use Vianetz\Pdf\Model\Merger\Fpdi;
 use Vianetz\Pdf\NoDataException;
 
-class PdfMerge implements PdfInterface
+class PdfMerge implements Pdfable
 {
     private MergerInterface $merger;
     private int $pageCount = 0;
@@ -35,22 +35,6 @@ class PdfMerge implements PdfInterface
     public static function create(?MergerInterface $merger = null): self
     {
         return new self($merger);
-    }
-
-    /** @deprecated */
-    public static function createWithMerger(MergerInterface $merger): self
-    {
-        return self::create($merger);
-    }
-
-    public function mergePdfFile(string $pdfFile, ?string $pdfBackgroundFile = null, ?string $pdfBackgroundFileForFirstPage = null): void
-    {
-        $fileContents = \file_get_contents($pdfFile);
-        if ($fileContents === false) {
-            return;
-        }
-
-        $this->mergePdfString($fileContents, $pdfBackgroundFile, $pdfBackgroundFileForFirstPage);
     }
 
     public function mergePdfString(string $pdfString, ?string $pdfBackgroundFile = null, ?string $pdfBackgroundFileForFirstPage = null): void
@@ -70,31 +54,13 @@ class PdfMerge implements PdfInterface
         }
     }
 
-    /**
-     * @deprecated use self::getContents() instead
-     *
-     * @throws \Vianetz\Pdf\NoDataException
-     */
-    public function getResult(): string
-    {
-        return $this->getContents();
-    }
-
     /** {@inheritDoc} */
-    final public function getContents(): string
+    final public function toPdf(): string
     {
         if ($this->pageCount === 0) {
             throw new NoDataException('No data to print.');
         }
 
-        return $this->merger->getPdfContents();
-    }
-
-    /** {@inheritDoc} */
-    final public function saveToFile(string $fileName): bool
-    {
-        $pdfContents = $this->getContents();
-
-        return @file_put_contents($fileName, $pdfContents) !== false;
+        return $this->merger->toPdf();
     }
 }

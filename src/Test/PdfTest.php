@@ -73,7 +73,7 @@ final class PdfTest extends TestCase
     public function testGetContentsReturnsExceptionIfNoDocumentsAdded(): void
     {
         $this->expectException(NoDataException::class);
-        $this->getPdfMock()->getContents();
+        $this->getPdfMock()->toPdf();
     }
 
     public function testGetContentsReturnsNonEmptyResult(): void
@@ -81,7 +81,7 @@ final class PdfTest extends TestCase
         $pdfMock = $this->getPdfMock();
         $pdfMock->addDocument($this->getDocumentMock());
 
-        $this->assertNotEmpty($pdfMock->getContents());
+        $this->assertNotEmpty($pdfMock->toPdf());
     }
 
     public function testDebugModeGeneratesDebugFile(): void

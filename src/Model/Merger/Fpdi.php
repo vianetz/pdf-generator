@@ -1,7 +1,7 @@
 <?php
+declare(strict_types=1);
+
 /**
- * FPDI Merger class
- *
  * This class is responsible for merging individual PDF documents and eventually adding the background PDF template file.
  *
  * @section LICENSE
@@ -22,27 +22,22 @@
 namespace Vianetz\Pdf\Model\Merger;
 
 use setasign\Fpdi\PdfParser\StreamReader;
-use setasign\Fpdi\Tcpdf\Fpdi as FpdiModel;
+use setasign\Fpdi\Tcpdf\Fpdi as TcpdfFpdi;
 use Vianetz\Pdf\Model\Config;
 
 final class Fpdi extends AbstractMerger
 {
-    /** @var string */
     private const OUTPUT_MODE_STRING = 'S';
-
-    /** @var string */
     private const OUTPUT_FORMAT_LANDSCAPE = 'L';
-
-    /** @var string */
     private const OUTPUT_FORMAT_PORTRAIT = 'P';
 
-    private FpdiModel $fpdiModel;
+    private TcpdfFpdi $fpdiModel;
     private string $orientation = self::OUTPUT_FORMAT_PORTRAIT;
     private string $paper = 'a4';
 
-    public function __construct(?\Vianetz\Pdf\Model\Config $config = null)
+    public function __construct(?Config $config = null)
     {
-        $config ??= new \Vianetz\Pdf\Model\Config();
+        $config ??= new Config();
 
         if ($config->getPdfOrientation() === Config::PAPER_ORIENTATION_PORTRAIT) {
             $this->orientation = self::OUTPUT_FORMAT_PORTRAIT;
@@ -50,7 +45,7 @@ final class Fpdi extends AbstractMerger
             $this->orientation = self::OUTPUT_FORMAT_LANDSCAPE;
         }
 
-        $this->fpdiModel = new FpdiModel($this->orientation, 'mm', $this->paper);
+        $this->fpdiModel = new TcpdfFpdi($this->orientation, 'mm', $this->paper);
 
         $this->fpdiModel->SetAuthor($config->getPdfAuthor());
         $this->fpdiModel->SetTitle($config->getPdfTitle());
@@ -81,7 +76,7 @@ final class Fpdi extends AbstractMerger
         $this->importPageFromFile($this->createPdfStream($pdfString), $pageNumber);
     }
 
-    public function getPdfContents(): string
+    public function toPdf(): string
     {
         return $this->fpdiModel->Output('', self::OUTPUT_MODE_STRING);
     }

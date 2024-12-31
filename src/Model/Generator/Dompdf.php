@@ -19,8 +19,6 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model\Generator;
 
-use Vianetz\Pdf\Model\HtmlDocumentInterface;
-
 /**
  * Known limitations of Dompdf:
  * - colspan is not working properly (table is moved to the top of the page)
@@ -36,15 +34,22 @@ final class Dompdf extends AbstractGenerator
     private \Dompdf\Dompdf $domPdf;
 
     /** @throws \Exception */
-    public function renderPdfDocument(HtmlDocumentInterface $documentModel): string
+    public function convert(string $html): self
     {
+        $this->writeDebugFile($html);
+
         $this->initPdf();
 
-        $this->domPdf->loadHtml($this->getHtmlContentsForDocument($documentModel));
+        $this->domPdf->loadHtml($html);
         $this->domPdf->render();
 
         $this->injectPageCount();
 
+        return $this;
+    }
+
+    public function toPdf(): string
+    {
         return $this->domPdf->output() ?? '';
     }
 
@@ -58,21 +63,6 @@ final class Dompdf extends AbstractGenerator
         $this->domPdf->addInfo('Title', $this->config->getPdfTitle());
 
         return $this;
-    }
-
-    /**
-     * Return HTML contents for one single document that is later merged with the others.
-     *
-     * @throws \Exception
-     */
-    protected function getHtmlContentsForDocument(HtmlDocumentInterface $documentModel): string
-    {
-        $htmlContents = $documentModel->getContents();
-
-        $htmlContents = $this->replaceSpecialChars($htmlContents);
-        $this->writeDebugFile($htmlContents);
-
-        return $htmlContents;
     }
 
     /**

@@ -19,7 +19,7 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model;
 
-class PdfDocument implements PdfDocumentInterface
+class PdfDocument implements Pdfable
 {
     protected string $pdfFile;
 
@@ -28,8 +28,13 @@ class PdfDocument implements PdfDocumentInterface
         $this->pdfFile = $pdfFile;
     }
 
-    public function getContents(): string
+    public function toPdf(): string
     {
-        return $this->pdfFile;
+        $fileContents = \file_get_contents($this->pdfFile);
+        if ($fileContents === false) {
+            return '';
+        }
+
+        return $fileContents;
     }
 }

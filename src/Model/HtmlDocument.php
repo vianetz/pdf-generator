@@ -19,7 +19,7 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model;
 
-class HtmlDocument implements HtmlDocumentInterface
+class HtmlDocument implements HasBackgroundPdf, Htmlable
 {
     private string $htmlContents;
     private ?string $pdfBackgroundFile = null;
@@ -32,7 +32,7 @@ class HtmlDocument implements HtmlDocumentInterface
         $this->pdfBackgroundFileForFirstPage = $pdfBackgroundFileForFirstPage;
     }
 
-    public function getContents(): string
+    public function toHtml(): string
     {
         return $this->htmlContents;
     }

@@ -19,7 +19,7 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model;
 
-interface GeneratorInterface
+interface Pdfable
 {
-    public function renderPdfDocument(HtmlDocumentInterface $documentModel): string;
+    public function toPdf(): string;
 }

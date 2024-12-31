@@ -6,7 +6,7 @@
  * Usage:
  * 1) Instantiate (optionally with your custom generator class)
  * 2) addDocument($document)
- * 3) getContents() or saveToFile()
+ * 3) toPdf() or saveToFile()
  *
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.

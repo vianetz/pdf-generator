@@ -39,6 +39,6 @@ final class PdfMergeTest extends TestCase
         $pdfMergeMock = $this->getPdfMergeMock();
         $this->expectException(NoDataException::class);
 
-        $pdfMergeMock->getContents();
+        $pdfMergeMock->toPdf();
     }
 }

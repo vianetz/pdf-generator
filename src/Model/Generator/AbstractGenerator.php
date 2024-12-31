@@ -20,7 +20,7 @@ declare(strict_types=1);
 namespace Vianetz\Pdf\Model\Generator;
 
 use Vianetz\Pdf\Model\Config;
-use Vianetz\Pdf\Model\GeneratorInterface;
+use Vianetz\Pdf\Model\Pdfable;
 
 /**
  * A note on PDF merging:
@@ -32,19 +32,16 @@ use Vianetz\Pdf\Model\GeneratorInterface;
  * A note on naming convention:
  * - "document" is the PDF contents of a source that serves as input for the generator (e.g. html string)
  */
-abstract class AbstractGenerator implements GeneratorInterface
+abstract class AbstractGenerator implements Pdfable // @todo rename Generator to Converter
 {
     public const DEBUG_FILE_NAME = 'vianetz_pdf_generator_debug.html';
     protected Config $config;
 
+    abstract public function convert(string $html): self;
+
     public function __construct(?Config $config = null)
     {
         $this->config = $config ?? new Config();
-    }
-
-    protected function replaceSpecialChars(string $htmlContents): string
-    {
-        return $htmlContents;
     }
 
     protected function writeDebugFile(string $fileContents): bool

@@ -21,10 +21,8 @@ namespace Vianetz\Pdf\Model;
 
 use setasign\Fpdi\PdfParser\StreamReader;
 
-interface MergerInterface
+interface MergerInterface extends Pdfable
 {
-    public function getPdfContents(): string;
-
     /** @param string|resource|StreamReader $file */
     public function importPageFromFile($file, int $pageNumber): void;
 

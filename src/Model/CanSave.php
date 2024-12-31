@@ -19,11 +19,8 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model;
 
-interface PdfInterface
+interface CanSave
 {
-    /** @throws \Vianetz\Pdf\NoDataException */
-    public function getContents(): string;
-
     /**
      * @api
      * @return bool true in case of success
