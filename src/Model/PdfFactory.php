@@ -33,7 +33,7 @@ final class PdfFactory
     public function create(Config $config = null, EventManagerInterface $eventManager = null): Pdf
     {
         $config ??= new Config();
-        $eventManager ??= new NullEventManager();
+        $eventManager ??= new NoneEventManager();
 
         $generator = new Dompdf($config);
         $merger = new Fpdi($config);

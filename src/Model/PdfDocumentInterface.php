@@ -19,9 +19,6 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model;
 
-interface PdfDocumentInterface
+interface PdfDocumentInterface extends DocumentInterface
 {
-    public function getPdfFile(): string;
-
-    public function setPdfFile(string $pdfFile): void;
 }

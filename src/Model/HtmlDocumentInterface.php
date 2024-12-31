@@ -19,10 +19,8 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model;
 
-interface HtmlDocumentInterface
+interface HtmlDocumentInterface extends DocumentInterface
 {
-    public function getHtmlContents(): string;
-
     public function getPdfBackgroundFile(): ?string;
 
     public function getPdfBackgroundFileForFirstPage(): ?string;

@@ -1,7 +1,7 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Pdf generator abstract class
- *
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
  * The code is distributed under the GPL license.
@@ -19,11 +19,10 @@
 
 namespace Vianetz\Pdf\Model\Generator;
 
+use Vianetz\Pdf\Model\Config;
 use Vianetz\Pdf\Model\GeneratorInterface;
 
 /**
- * Class Vianetz_Pdf_Model_Abstract
- *
  * A note on PDF merging:
  * - each generator instance generates the PDF of one source
  * - the merge() method in this class takes care of the merging of the single files
@@ -31,60 +30,26 @@ use Vianetz\Pdf\Model\GeneratorInterface;
  * addresses, etc. that cannot be determined correctly if you put all in one file.
  *
  * A note on naming convention:
- * - "document" means the PDF representation of a source that serves as input for the generator
+ * - "document" is the PDF contents of a source that serves as input for the generator (e.g. html string)
  */
 abstract class AbstractGenerator implements GeneratorInterface
 {
-    /** @var string */
-    const DEBUG_FILE_NAME = 'vianetz_pdf_generator_debug.html';
+    public const DEBUG_FILE_NAME = 'vianetz_pdf_generator_debug.html';
+    protected Config $config;
 
-    /** @var \Vianetz\Pdf\Model\Config $config */
-    protected $config;
-
-    /**
-     * Constructor initializes configuration values.
-     *
-     * @param \Vianetz\Pdf\Model\Config|null $config
-     */
-    public function __construct(\Vianetz\Pdf\Model\Config $config = null)
+    public function __construct(?Config $config = null)
     {
-        if (empty($config) === true) {
-            $config = new \Vianetz\Pdf\Model\Config();
-        }
-
-        $this->config = $config;
-
-        $this->initGenerator();
+        $this->config = $config ?? new Config();
     }
 
-    /**
-     * Initialize the generator instance.
-     *
-     * @return \Vianetz\Pdf\Model\Generator\AbstractGenerator
-     */
-    protected function initGenerator()
+    protected function replaceSpecialChars(string $htmlContents): string
     {
-        // By default we do nothing..
-        return $this;
-    }
-
-    /**
-     * Replace special characters for DomPDF library.
-     *
-     * @param string $htmlContents
-     *
-     * @return string
-     */
-    protected function replaceSpecialChars($htmlContents)
-    {
-        // Nothing to do at the moment.
-
         return $htmlContents;
     }
 
     protected function writeDebugFile(string $fileContents): bool
     {
-        if ($this->config->isDebugMode() === false) {
+        if (! $this->config->isDebugMode()) {
             return false;
         }
 

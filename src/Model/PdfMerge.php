@@ -29,11 +29,7 @@ class PdfMerge implements PdfInterface
 
     public function __construct(?MergerInterface $merger = null)
     {
-        if ($merger === null) {
-            $merger = new Fpdi();
-        }
-
-        $this->merger = $merger;
+        $this->merger = $merger ?? new Fpdi();
     }
 
     public static function create(?MergerInterface $merger = null): self

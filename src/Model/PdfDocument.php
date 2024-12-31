@@ -19,17 +19,17 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model;
 
-final class PdfDocument implements PdfDocumentInterface
+class PdfDocument implements PdfDocumentInterface
 {
-    private string $pdfFile;
+    protected string $pdfFile;
 
-    public function getPdfFile(): string
-    {
-        return $this->pdfFile;
-    }
-
-    public function setPdfFile(string $pdfFile): void
+    public function __construct(string $pdfFile)
     {
         $this->pdfFile = $pdfFile;
+    }
+
+    public function getContents(): string
+    {
+        return $this->pdfFile;
     }
 }

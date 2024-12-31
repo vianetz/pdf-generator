@@ -19,11 +19,7 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model;
 
-final class NullEventManager implements EventManagerInterface
+interface DocumentInterface
 {
-    /** {@inheritDoc} */
-    public function dispatch(string $eventName, array $data = []): void
-    {
-        // do nothing
-    }
+    public function getContents(): string;
 }

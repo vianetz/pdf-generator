@@ -19,20 +19,11 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model;
 
-use setasign\Fpdi\PdfParser\StreamReader;
-
-interface MergerInterface
+final class NoneEventManager implements EventManagerInterface
 {
-    public function getPdfContents(): string;
-
-    /** @param string|resource|StreamReader $file */
-    public function importPageFromFile($file, int $pageNumber): void;
-
-    public function importPageFromPdfString(string $pdfString, int $pageNumber): void;
-
-    public function countPages(string $fileName): int;
-
-    public function addPage(): self;
-
-    public function importBackgroundTemplateFile(string $pdfBackgroundFile): void;
+    /** {@inheritDoc} */
+    public function dispatch(string $eventName, array $data = []): void
+    {
+        // do nothing
+    }
 }

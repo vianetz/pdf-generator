@@ -1,7 +1,7 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Pdf generator abstract class
- *
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
  * The code is distributed under the GPL license.

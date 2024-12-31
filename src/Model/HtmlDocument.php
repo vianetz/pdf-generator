@@ -32,7 +32,7 @@ class HtmlDocument implements HtmlDocumentInterface
         $this->pdfBackgroundFileForFirstPage = $pdfBackgroundFileForFirstPage;
     }
 
-    public function getHtmlContents(): string
+    public function getContents(): string
     {
         return $this->htmlContents;
     }
@@ -42,18 +42,8 @@ class HtmlDocument implements HtmlDocumentInterface
         return $this->pdfBackgroundFile;
     }
 
-    public function setPdfBackgroundFile(string $pdfBackgroundFile): void
-    {
-        $this->pdfBackgroundFile = $pdfBackgroundFile;
-    }
-
     public function getPdfBackgroundFileForFirstPage(): ?string
     {
         return $this->pdfBackgroundFileForFirstPage;
-    }
-
-    public function setPdfBackgroundFileForFirstPage(string $pdfBackgroundFileForFirstPage): void
-    {
-        $this->pdfBackgroundFileForFirstPage = $pdfBackgroundFileForFirstPage;
     }
 }

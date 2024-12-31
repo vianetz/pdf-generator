@@ -67,7 +67,7 @@ final class Dompdf extends AbstractGenerator
      */
     protected function getHtmlContentsForDocument(HtmlDocumentInterface $documentModel): string
     {
-        $htmlContents = $documentModel->getHtmlContents();
+        $htmlContents = $documentModel->getContents();
 
         $htmlContents = $this->replaceSpecialChars($htmlContents);
         $this->writeDebugFile($htmlContents);
