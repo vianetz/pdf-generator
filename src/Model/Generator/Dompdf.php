@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
@@ -17,7 +19,7 @@
 
 namespace Vianetz\Pdf\Model\Generator;
 
-use Vianetz\Pdf\Model\DocumentInterface;
+use Vianetz\Pdf\Model\HtmlDocumentInterface;
 
 /**
  * Known limitations of Dompdf:
@@ -34,7 +36,7 @@ final class Dompdf extends AbstractGenerator
     private \Dompdf\Dompdf $domPdf;
 
     /** @throws \Exception */
-    public function renderPdfDocument(DocumentInterface $documentModel): ?string
+    public function renderPdfDocument(HtmlDocumentInterface $documentModel): string
     {
         $this->initPdf();
 
@@ -43,7 +45,7 @@ final class Dompdf extends AbstractGenerator
 
         $this->injectPageCount();
 
-        return $this->domPdf->output();
+        return $this->domPdf->output() ?? '';
     }
 
     protected function initPdf(): self
@@ -63,7 +65,7 @@ final class Dompdf extends AbstractGenerator
      *
      * @throws \Exception
      */
-    protected function getHtmlContentsForDocument(DocumentInterface $documentModel): string
+    protected function getHtmlContentsForDocument(HtmlDocumentInterface $documentModel): string
     {
         $htmlContents = $documentModel->getHtmlContents();
 

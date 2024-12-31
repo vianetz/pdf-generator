@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
@@ -19,10 +21,8 @@ namespace Vianetz\Pdf\Model;
 
 final class NullEventManager implements EventManagerInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function dispatch($eventName, array $data = [])
+    /** {@inheritDoc} */
+    public function dispatch(string $eventName, array $data = []): void
     {
         // do nothing
     }

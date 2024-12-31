@@ -1,7 +1,7 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Pdf generator interface class
- *
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
  * The code is distributed under the GPL license.
@@ -19,17 +19,7 @@
 
 namespace Vianetz\Pdf\Model;
 
-/**
- * Interface Vianetz_Pdf_Model_Generator_Interface
- */
 interface GeneratorInterface
 {
-    /**
-     * Render the pdf document.
-     *
-     * @param DocumentInterface $documentModel
-     *
-     * @return string
-     */
-    public function renderPdfDocument(DocumentInterface $documentModel);
+    public function renderPdfDocument(HtmlDocumentInterface $documentModel): string;
 }

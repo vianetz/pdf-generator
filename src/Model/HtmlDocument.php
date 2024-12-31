@@ -19,7 +19,7 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model;
 
-class Document implements DocumentInterface
+class HtmlDocument implements HtmlDocumentInterface
 {
     private string $htmlContents;
     private string $pdfBackgroundFile = '';

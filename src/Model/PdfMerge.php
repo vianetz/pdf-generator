@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
@@ -22,13 +24,10 @@ use Vianetz\Pdf\NoDataException;
 
 class PdfMerge implements PdfInterface
 {
-    /** @var \Vianetz\Pdf\Model\MergerInterface */
-    private $merger;
+    private MergerInterface $merger;
+    private int $pageCount = 0;
 
-    /** @var int */
-    private $pageCount = 0;
-
-    public function __construct(MergerInterface $merger = null)
+    public function __construct(?MergerInterface $merger = null)
     {
         if ($merger === null) {
             $merger = new Fpdi();
@@ -37,33 +36,18 @@ class PdfMerge implements PdfInterface
         $this->merger = $merger;
     }
 
-    /**
-     * @return \Vianetz\Pdf\Model\PdfMerge
-     */
-    public static function create(MergerInterface $merger = null)
+    public static function create(?MergerInterface $merger = null): self
     {
         return new self($merger);
     }
 
-    /**
-     * @deprecated
-     * @return \Vianetz\Pdf\Model\PdfMerge
-     */
-    public static function createWithMerger(MergerInterface $merger)
+    /** @deprecated */
+    public static function createWithMerger(MergerInterface $merger): self
     {
         return self::create($merger);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $pdfFile
-     * @param null|string $pdfBackgroundFile
-     * @param null|string $pdfBackgroundFileForFirstPage
-     *
-     * @return void
-     */
-    public function mergePdfFile($pdfFile, $pdfBackgroundFile = null, $pdfBackgroundFileForFirstPage = null)
+    public function mergePdfFile(string $pdfFile, ?string $pdfBackgroundFile = null, ?string $pdfBackgroundFileForFirstPage = null): void
     {
         $fileContents = \file_get_contents($pdfFile);
         if ($fileContents === false) {
@@ -73,16 +57,7 @@ class PdfMerge implements PdfInterface
         $this->mergePdfString($fileContents, $pdfBackgroundFile, $pdfBackgroundFileForFirstPage);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $pdfString
-     * @param string|null $pdfBackgroundFile
-     * @param string|null $pdfBackgroundFileForFirstPage
-     *
-     * @return void
-     */
-    public function mergePdfString($pdfString, $pdfBackgroundFile = null, $pdfBackgroundFileForFirstPage = null)
+    public function mergePdfString(string $pdfString, ?string $pdfBackgroundFile = null, ?string $pdfBackgroundFileForFirstPage = null): void
     {
         $pageCount = $this->merger->countPages($pdfString);
         for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
@@ -102,18 +77,15 @@ class PdfMerge implements PdfInterface
     /**
      * @deprecated use self::getContents() instead
      *
-     * @return string
      * @throws \Vianetz\Pdf\NoDataException
      */
-    public function getResult()
+    public function getResult(): string
     {
         return $this->getContents();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    final public function getContents()
+    /** {@inheritDoc} */
+    final public function getContents(): string
     {
         if ($this->pageCount === 0) {
             throw new NoDataException('No data to print.');
@@ -122,10 +94,8 @@ class PdfMerge implements PdfInterface
         return $this->merger->getPdfContents();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    final public function saveToFile($fileName)
+    /** {@inheritDoc} */
+    final public function saveToFile(string $fileName): bool
     {
         $pdfContents = $this->getContents();
 

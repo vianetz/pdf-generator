@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Vianetz Public Pdf Model
  *
@@ -29,35 +31,19 @@ use Vianetz\Pdf\NoDataException;
 
 class Pdf implements PdfInterface
 {
-    /**
-     * The generator instance.
-     *
-     * @var GeneratorInterface
-     */
-    private $generator;
-
-    /** @var \Vianetz\Pdf\Model\PdfMerge */
-    private $pdfMerge;
-
-    /**
-     * The (cached) pdf contents.
-     *
-     * @var string|null
-     */
-    private $contents;
+    private GeneratorInterface $generator;
+    private PdfMerge $pdfMerge;
+    private ?string $contents = null;
 
     /**
      * Initialize empty array for PDF documents to print.
      *
-     * @var array<\Vianetz\Pdf\Model\DocumentInterface|\Vianetz\Pdf\Model\PdfDocumentInterface>
+     * @var array<\Vianetz\Pdf\Model\HtmlDocumentInterface|\Vianetz\Pdf\Model\PdfDocumentInterface>
      */
-    private $documents = [];
+    private array $documents = [];
 
-    /** @var Config */
-    protected $config;
-
-    /** @var \Vianetz\Pdf\Model\EventManagerInterface */
-    protected $eventManager;
+    protected Config $config;
+    protected EventManagerInterface $eventManager;
 
     /**
      * Default constructor initializes pdf generator.
@@ -76,10 +62,8 @@ class Pdf implements PdfInterface
         $this->eventManager = $eventManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    final public function getContents()
+    /** {@inheritDoc} */
+    final public function getContents(): string
     {
         if ($this->contents === null) {
             $this->renderPdfContentsForAllDocuments();
@@ -89,10 +73,8 @@ class Pdf implements PdfInterface
         return $this->contents;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    final public function saveToFile($fileName)
+    /** {@inheritDoc} */
+    final public function saveToFile(string $fileName): bool
     {
         $pdfContents = $this->getContents();
 
@@ -102,7 +84,7 @@ class Pdf implements PdfInterface
     /**
      * Add a new document to generate.
      *
-     * @param \Vianetz\Pdf\Model\DocumentInterface|\Vianetz\Pdf\Model\PdfDocumentInterface $documentModel
+     * @param \Vianetz\Pdf\Model\HtmlDocumentInterface|\Vianetz\Pdf\Model\PdfDocumentInterface $documentModel
      *
      * @api
      */
@@ -117,10 +99,8 @@ class Pdf implements PdfInterface
 
     /**
      * Returns the number of documents added to the generator.
-     *
-     * @return int
      */
-    final public function countDocuments()
+    final public function countDocuments(): int
     {
         return count($this->documents);
     }
@@ -131,18 +111,13 @@ class Pdf implements PdfInterface
      * Note:
      * This method only exists for compatibility reasons to provide the same interface as the original Zend_Pdf
      * components.
-     *
-     * @return string
      */
-    final public function render()
+    final public function render(): string
     {
         return $this->getContents();
     }
 
-    /**
-     * @return \Vianetz\Pdf\Model\Config
-     */
-    public function getConfig()
+    public function getConfig(): Config
     {
         return $this->config;
     }
@@ -150,16 +125,15 @@ class Pdf implements PdfInterface
     /**
      * Return merged pdf contents of all documents and save it to single temporary files.
      *
-     * @return void
      * @throws \Vianetz\Pdf\NoDataException
      */
-    private function renderPdfContentsForAllDocuments()
+    private function renderPdfContentsForAllDocuments(): void
     {
         $hasData = false;
         foreach ($this->documents as $documentInstance) {
             $this->eventManager->dispatch('vianetz_pdf_document_render_before', ['document' => $documentInstance]);
 
-            if ($documentInstance instanceof DocumentInterface) {
+            if ($documentInstance instanceof HtmlDocumentInterface) {
                 $this->eventManager->dispatch('vianetz_pdf_' . $documentInstance->getDocumentType() . '_document_render_before', ['document' => $documentInstance]);
 
                 $pdfContents = $this->generator->renderPdfDocument($documentInstance);

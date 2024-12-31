@@ -5,13 +5,14 @@ Internally it uses the DomPDF library for PDF generation and TCPDF for merging.
 
 ## Usage
 
-### Create PDF document from HTML contents 
+### Create PDF document from HTML contents
+
 ```php
 // Create a new pdf instance.
 $pdf = Vianetz\Pdf\Model\PdfFactory::general()->create();
 
 // Create the document. You can return any kind of HTML content here.
-$document = new \Vianetz\Pdf\Model\Document();
+$document = new \Vianetz\Pdf\Model\HtmlDocument();
 $document->setHtmlContents('<strong>Hello</strong> World!');
  
 // Add our document to the pdf. You can add as many documents as you like

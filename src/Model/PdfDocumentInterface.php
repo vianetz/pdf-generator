@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
@@ -19,14 +21,7 @@ namespace Vianetz\Pdf\Model;
 
 interface PdfDocumentInterface
 {
-    /**
-     * @return string
-     */
-    public function getPdfFile();
+    public function getPdfFile(): string;
 
-    /**
-     * @param string $pdfFile
-     * @return void
-     */
-    public function setPdfFile($pdfFile);
+    public function setPdfFile(string $pdfFile): void;
 }

@@ -29,10 +29,10 @@ final class PdfTest extends TestCase
 {
     private const TMP_DIR = './tmp_dir/';
 
-    private function getDocumentMock(): \Vianetz\Pdf\Model\Document
+    private function getDocumentMock(): \Vianetz\Pdf\Model\HtmlDocument
     {
-        /** @var \Vianetz\Pdf\Model\Document $document */
-        $document = new \Vianetz\Pdf\Model\Document();
+        /** @var \Vianetz\Pdf\Model\HtmlDocument $document */
+        $document = new \Vianetz\Pdf\Model\HtmlDocument();
         $document->setHtmlContents('<html><body>This is the <strong>pdf-generator</strong> test!</body></html>');
 
         return $document;

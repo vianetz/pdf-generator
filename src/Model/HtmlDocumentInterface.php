@@ -19,8 +19,7 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model;
 
-/** @todo rename to HtmlDocumentInterface */
-interface DocumentInterface
+interface HtmlDocumentInterface
 {
     public function getHtmlContents(): string;
 
