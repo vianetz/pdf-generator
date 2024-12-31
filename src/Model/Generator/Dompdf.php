@@ -84,6 +84,7 @@ final class Dompdf extends AbstractGenerator
             'isPhpEnabled' => true,
             'isRemoteEnabled' => true,
             'chroot' => $this->config->getChrootDir(),
+            'fontCache' => $this->config->getTempDir(),
         ];
     }
 

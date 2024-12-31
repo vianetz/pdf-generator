@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
@@ -17,42 +19,18 @@
 
 namespace Vianetz\Pdf\Model;
 
-/**
- * @todo rename to HtmlDocumentInterface
- */
+/** @todo rename to HtmlDocumentInterface */
 interface DocumentInterface
 {
-    /**
-     * Return HTML file contents for conversion to PDF.
-     *
-     * @return string
-     */
-    public function getHtmlContents();
+    public function getHtmlContents(): string;
 
-    /**
-     * @return string
-     */
-    public function getPdfBackgroundFile();
+    public function getPdfBackgroundFile(): string;
 
-    /**
-     * @param string $pdfFile
-     * @return void
-     */
-    public function setPdfBackgroundFile($pdfFile);
+    public function setPdfBackgroundFile(string $pdfFile): void;
 
-    /**
-     * @return string
-     */
-    public function getPdfBackgroundFileForFirstPage();
+    public function getPdfBackgroundFileForFirstPage(): string;
 
-    /**
-     * @param string $pdfFile
-     * @return void
-     */
-    public function setPdfBackgroundFileForFirstPage($pdfFile);
+    public function setPdfBackgroundFileForFirstPage(string $pdfFile): void;
 
-    /**
-     * @return string
-     */
-    public function getDocumentType();
+    public function getDocumentType(): string;
 }

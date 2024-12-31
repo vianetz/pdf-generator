@@ -1,7 +1,7 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Pdf document class
- *
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
  * The code is distributed under the GPL license.
@@ -21,72 +21,43 @@ namespace Vianetz\Pdf\Model;
 
 class Document implements DocumentInterface
 {
-    /** @var string */
-    private $htmlContents;
+    private string $htmlContents;
+    private string $pdfBackgroundFile = '';
+    private string $pdfBackgroundFileForFirstPage = '';
 
-    /** @var string */
-    private $pdfBackgroundFile = '';
-
-    /** @var string */
-    private $pdfBackgroundFileForFirstPage = '';
-
-    /**
-     * @param string $htmlContents
-     *
-     * @return \Vianetz\Pdf\Model\Document
-     */
-    public function setHtmlContents($htmlContents)
+    public function setHtmlContents(string $htmlContents): self
     {
         $this->htmlContents = $htmlContents;
+
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getHtmlContents()
+    public function getHtmlContents(): string
     {
         return $this->htmlContents;
     }
 
-    /**
-     * @return string
-     */
-    public function getPdfBackgroundFile()
+    public function getPdfBackgroundFile(): string
     {
         return $this->pdfBackgroundFile;
     }
 
-    /**
-     * @param string $pdfFile
-     * @return void
-     */
-    public function setPdfBackgroundFile($pdfFile)
+    public function setPdfBackgroundFile(string $pdfBackgroundFile): void
     {
-        $this->pdfBackgroundFile = $pdfFile;
+        $this->pdfBackgroundFile = $pdfBackgroundFile;
     }
 
-    /**
-     * @return string
-     */
-    public function getPdfBackgroundFileForFirstPage()
+    public function getPdfBackgroundFileForFirstPage(): string
     {
         return $this->pdfBackgroundFileForFirstPage;
     }
 
-    /**
-     * @param string $pdfFile
-     * @return void
-     */
-    public function setPdfBackgroundFileForFirstPage($pdfFile)
+    public function setPdfBackgroundFileForFirstPage(string $pdfBackgroundFileForFirstPage): void
     {
-        $this->pdfBackgroundFileForFirstPage = $pdfFile;
+        $this->pdfBackgroundFileForFirstPage = $pdfBackgroundFileForFirstPage;
     }
 
-    /**
-     * @return string
-     */
-    public function getDocumentType()
+    public function getDocumentType(): string
     {
         return '';
     }
