@@ -22,6 +22,7 @@ namespace Vianetz\Pdf\Model\Merger;
 use horstoeko\zugferd\ZugferdPdfWriter;
 use Vianetz\Pdf\Model\Config;
 
+/** @property ZugferdPdfWriter $fpdiModel */
 final class ZugferdFpdf extends Fpdf
 {
     public function __construct(?Config $config = null)

@@ -26,6 +26,12 @@ jobs:
       with:
         php_version: ${{ matrix.php-version }}
 
+    - uses: php-actions/composer@v6
+      with:
+        php_version: ${{ matrix.php-version }}
+        command: 'require'
+        args: 'horstoeko/zugferd tecnickcom/tcpdf'
+
     - name: Run PHPUnit tests
       run: vendor/bin/phpunit
 
