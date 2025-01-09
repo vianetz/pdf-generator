@@ -1,7 +1,9 @@
-# vianetz PDF Library
+# vianetz Pdf Library
 
 This library offers an easy-to-use API for PDF generation and merging.  
-Internally it uses the DomPDF library for PDF generation and TCPDF for merging.
+Internally it uses the [DomPDF library](https://github.com/dompdf/dompdf) for PDF generation and [FPDI](https://github.com/Setasign/FPDI) for merging.
+
+More information about this PDF API can also be found [on my website](https://www.vianetz.com/en/pdf-invoice-api-magento/).
 
 ## Usage
 
@@ -9,14 +11,14 @@ Internally it uses the DomPDF library for PDF generation and TCPDF for merging.
 
 ```php
 // Create a new pdf instance.
-$pdf = Vianetz\Pdf\Model\PdfFactory::general()->create();
+$pdf = \Vianetz\Pdf\Model\PdfFactory::general()->create();
 
 // Create the document. You can return any kind of HTML content here.
 $document = new \Vianetz\Pdf\Model\HtmlDocument('<strong>Hello</strong> World!');
  
 // Add our document to the pdf. You can add as many documents as you like
 // as they will all be merged into one PDF file.
-$pdf->addDocument($document);
+$pdf->add($document);
 
 // Save the resulting PDF to file test.pdf - That's it :-)
 $pdf->saveToFile('test.pdf');
@@ -28,15 +30,14 @@ $pdf->saveToFile('test.pdf');
 $pdfString = file_get_contents('test1.pdf');
 
 // Setup things
-$pdf = Vianetz\Pdf\Model\PdfFactory::general()->create();
-$pdfMerge = Vianetz\Pdf\Model\PdfMerge::create();
+$pdfMerge = \Vianetz\Pdf\Model\PdfMerge::create();
 
 // Do the merge.
-$pdfMerge->mergePdfString($pdfString);
+$pdfMerge->mergePdfString($pdfString, 'background.pdf');
 $pdfMerge->mergePdfFile('test2.pdf');
 
 // Save the result PDF to file result.pdf.
-$pdfMerge->saveToFile('result.pdf');
+file_put_contents($fileName, $pdfMerge->toPdf());
 ```
 
 ### Tips & Tricks
@@ -49,12 +50,6 @@ Please find the Frequently Asked Questions [on my website](https://www.vianetz.c
 ## Support
 If you have any issues or suggestions with this extension, please do not hesitate to
 [contact me](https://www.vianetz.com/en/contacts).
-
-## Credits
-Of course this extension would not have been possible without the great open source eco-system.
-Therewith credits go to:
-- [DomPDF](https://github.com/dompdf/dompdf)
-- [FPDI](https://github.com/Setasign/FPDI)
 
 ## License
 [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html)  

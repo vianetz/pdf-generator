@@ -19,7 +19,7 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model;
 
-use Vianetz\Pdf\Model\Merger\Fpdi;
+use Vianetz\Pdf\Model\Merger\Fpdf;
 use Vianetz\Pdf\NoDataException;
 
 class PdfMerge implements Pdfable
@@ -29,7 +29,7 @@ class PdfMerge implements Pdfable
 
     public function __construct(?MergerInterface $merger = null)
     {
-        $this->merger = $merger ?? new Fpdi();
+        $this->merger = $merger ?? new Fpdf();
     }
 
     public static function create(?MergerInterface $merger = null): self
@@ -39,6 +39,8 @@ class PdfMerge implements Pdfable
 
     public function mergePdfString(string $pdfString, ?string $pdfBackgroundFile = null, ?string $pdfBackgroundFileForFirstPage = null): void
     {
+        $pdfBackgroundFileForFirstPage ??= $pdfBackgroundFile;
+
         $pageCount = $this->merger->countPages($pdfString);
         for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
             $this->merger->addPage();
@@ -52,6 +54,11 @@ class PdfMerge implements Pdfable
 
             $this->merger->importPageFromPdfString($pdfString, $pageNumber);
         }
+    }
+
+    public function addAttachment(string $fileName): void
+    {
+        $this->merger->addAttachment($fileName);
     }
 
     /** {@inheritDoc} */

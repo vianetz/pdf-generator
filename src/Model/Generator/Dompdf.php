@@ -34,7 +34,7 @@ final class Dompdf extends AbstractGenerator
     private \Dompdf\Dompdf $domPdf;
 
     /** @throws \Exception */
-    public function convert(string $html): self
+    public function import(string $html): self
     {
         $this->writeDebugFile($html);
 

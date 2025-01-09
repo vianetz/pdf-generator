@@ -2,12 +2,12 @@
 declare(strict_types=1);
 
 /**
- * Vianetz Public Pdf Model
+ * vianetz Pdf Factory
  *
  * This class wraps all the internal processes and is the main class that is intended to be used by developers.
  * Usage:
  * 1) Instantiate (optionally with your custom generator class)
- * 2) addDocument($document)
+ * 2) add($document) or attach($file)
  * 3) toPdf() or saveToFile()
  *
  * @section LICENSE
@@ -37,21 +37,14 @@ class Pdf implements CanSave, Pdfable
     private PdfMerge $pdfMerge;
     private ?string $pdfContents = null;
 
-    /**
-     * Initialize empty array for PDF documents to print.
-     *
-     * @var list<\Vianetz\Pdf\Model\Pdfable|\Vianetz\Pdf\Model\Htmlable>
-     */
+    /** @var list<\Vianetz\Pdf\Model\Pdfable|\Vianetz\Pdf\Model\Htmlable> */
     private array $documents = [];
+    /** @var list<string> */
+    private array $attachments = [];
 
     protected Config $config;
     protected EventManagerInterface $eventManager;
 
-    /**
-     * Default constructor initializes pdf generator.
-     *
-     * A custom generator class may be injected via $this->setGenerator(), otherwise the default DomPdf generator is used.
-     */
     final public function __construct(
         Config $config,
         EventManagerInterface $eventManager,
@@ -69,6 +62,7 @@ class Pdf implements CanSave, Pdfable
     {
         if ($this->pdfContents === null) {
             $this->renderPdfContentsForAllDocuments();
+            $this->renderAttachments();
             $this->pdfContents = $this->pdfMerge->toPdf();
         }
 
@@ -89,11 +83,18 @@ class Pdf implements CanSave, Pdfable
      * @api
      * @param \Vianetz\Pdf\Model\Pdfable|\Vianetz\Pdf\Model\Htmlable $documentModel
      */
-    final public function addDocument($documentModel): self
+    final public function add($documentModel): self
     {
         $this->documents[] = $documentModel;
         // Reset cached pdf contents.
         $this->pdfContents = null;
+
+        return $this;
+    }
+
+    final public function attach(string $file): self
+    {
+        $this->attachments[] = $file;
 
         return $this;
     }
@@ -138,7 +139,7 @@ class Pdf implements CanSave, Pdfable
             ]);
 
             if ($documentInstance instanceof Htmlable) {
-                $pdfContents = $this->generator->convert($documentInstance->toHtml())->toPdf();
+                $pdfContents = $this->generator->import($documentInstance->toHtml())->toPdf();
                 if (empty($pdfContents)) {
                     continue;
                 }
@@ -164,6 +165,13 @@ class Pdf implements CanSave, Pdfable
 
         if (! $hasData) {
             throw new NoDataException('No data to print.');
+        }
+    }
+
+    private function renderAttachments(): void
+    {
+        foreach ($this->attachments as $fileName) {
+            $this->pdfMerge->addAttachment($fileName);
         }
     }
 }

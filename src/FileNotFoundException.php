@@ -19,6 +19,6 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf;
 
-class Exception extends \Exception
+class FileNotFoundException extends \Exception
 {
 }

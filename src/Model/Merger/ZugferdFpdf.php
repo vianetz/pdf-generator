@@ -17,8 +17,22 @@ declare(strict_types=1);
  * @license     http://www.gnu.org/licenses/gpl-3.0.txt GNU GENERAL PUBLIC LICENSE
  */
 
-namespace Vianetz\Pdf;
+namespace Vianetz\Pdf\Model\Merger;
 
-class Exception extends \Exception
+use horstoeko\zugferd\ZugferdPdfWriter;
+use Vianetz\Pdf\Model\Config;
+
+final class ZugferdFpdf extends Fpdf
 {
+    public function __construct(?Config $config = null)
+    {
+        parent::__construct($config, new ZugferdPdfWriter());
+    }
+
+    public function addAttachment(string $fileName): self
+    {
+        $this->fpdiModel->attach($fileName);
+
+        return $this;
+    }
 }

@@ -55,7 +55,7 @@ final class PdfTest extends TestCase
     public function testAddOneDocumentIncreasesDocumentCounterByOne(): void
     {
         $pdfMock = $this->getPdfMock();
-        $pdfMock->addDocument($this->getDocumentMock());
+        $pdfMock->add($this->getDocumentMock());
 
         $this->assertEquals(1, $pdfMock->countDocuments());
     }
@@ -63,9 +63,9 @@ final class PdfTest extends TestCase
     public function testAddThreeDocumentsIncreasesDocumentCounterByThree(): void
     {
         $pdfMock = $this->getPdfMock();
-        $pdfMock->addDocument($this->getDocumentMock())
-            ->addDocument($this->getDocumentMock())
-            ->addDocument($this->getDocumentMock());
+        $pdfMock->add($this->getDocumentMock())
+            ->add($this->getDocumentMock())
+            ->add($this->getDocumentMock());
 
         $this->assertEquals(3, $pdfMock->countDocuments());
     }
@@ -79,7 +79,7 @@ final class PdfTest extends TestCase
     public function testGetContentsReturnsNonEmptyResult(): void
     {
         $pdfMock = $this->getPdfMock();
-        $pdfMock->addDocument($this->getDocumentMock());
+        $pdfMock->add($this->getDocumentMock());
 
         $this->assertNotEmpty($pdfMock->toPdf());
     }
@@ -91,7 +91,7 @@ final class PdfTest extends TestCase
             ->setTempDir('.');
 
         $pdfMock = $this->getPdfMock($config);
-        $pdfMock->addDocument($this->getDocumentMock())
+        $pdfMock->add($this->getDocumentMock())
             ->render();
         $this->assertFileExists(AbstractGenerator::DEBUG_FILE_NAME);
     }
@@ -111,7 +111,7 @@ final class PdfTest extends TestCase
         $config->setTempDir(self::TMP_DIR);
 
         $pdfMock = $this->getPdfMock($config);
-        $pdfMock->addDocument($this->getDocumentMock())
+        $pdfMock->add($this->getDocumentMock())
             ->render();
 
         $this->assertDirectoryIsNotWritable(self::TMP_DIR);

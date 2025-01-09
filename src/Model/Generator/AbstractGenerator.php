@@ -37,7 +37,7 @@ abstract class AbstractGenerator implements Pdfable // @todo rename Generator to
     public const DEBUG_FILE_NAME = 'vianetz_pdf_generator_debug.html';
     protected Config $config;
 
-    abstract public function convert(string $html): self;
+    abstract public function import(string $html): self;
 
     public function __construct(?Config $config = null)
     {

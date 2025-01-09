@@ -28,9 +28,12 @@ interface MergerInterface extends Pdfable
 
     public function importPageFromPdfString(string $pdfString, int $pageNumber): void;
 
-    public function countPages(string $fileName): int;
+    public function countPages(string $pdfString): int;
 
     public function addPage(): self;
 
+    public function addAttachment(string $fileName): self;
+
+    /** @throws \Vianetz\Pdf\FileNotFoundException */
     public function importBackgroundTemplateFile(string $pdfBackgroundFile): void;
 }

@@ -26,17 +26,17 @@
 namespace Vianetz\Pdf\Model;
 
 use Vianetz\Pdf\Model\Generator\Dompdf;
-use Vianetz\Pdf\Model\Merger\Fpdi;
+use Vianetz\Pdf\Model\Merger\Fpdf;
 
 final class PdfFactory
 {
-    public function create(Config $config = null, EventManagerInterface $eventManager = null): Pdf
+    public function create(?Config $config = null, ?EventManagerInterface $eventManager = null): Pdf
     {
         $config ??= new Config();
         $eventManager ??= new NoneEventManager();
 
         $generator = new Dompdf($config);
-        $merger = new Fpdi($config);
+        $merger = new Fpdf($config);
 
         return new Pdf($config, $eventManager, $generator, $merger);
     }
