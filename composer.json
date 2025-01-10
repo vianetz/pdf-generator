@@ -32,8 +32,8 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^9|^10|^11",
-    "phpstan/phpstan": "^1.8",
-    "phpstan/phpstan-phpunit": "^1.1"
+    "phpstan/phpstan": "^2.1",
+    "phpstan/phpstan-phpunit": "^2.0"
   },
   "suggest": {
     "horstoeko/zugferd": "Create Zugferd documents with this merger library",
