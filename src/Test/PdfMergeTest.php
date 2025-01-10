@@ -23,22 +23,16 @@ use Vianetz\Pdf\NoDataException;
 
 final class PdfMergeTest extends TestCase
 {
-    /**
-     * @return \Vianetz\Pdf\Model\PdfMerge
-     */
-    private function getPdfMergeMock()
+    private function getPdfMergeMock(): PdfMerge
     {
         return PdfMerge::create();
     }
 
-    /**
-     * @return void
-     */
-    public function testMergeGeneratesEmptyPdfIfNoContentsAdded()
+    public function testMergeGeneratesEmptyPdfIfNoContentsAdded(): void
     {
         $pdfMergeMock = $this->getPdfMergeMock();
         $this->expectException(NoDataException::class);
 
-        $pdfMergeMock->getContents();
+        $pdfMergeMock->toPdf();
     }
 }

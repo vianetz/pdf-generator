@@ -27,8 +27,8 @@
   "require": {
     "php": "^7.4|^8",
     "dompdf/dompdf": "^2.0|^3.0",
-    "setasign/fpdi": "^2.0",
-    "tecnickcom/tcpdf": "^6.4"
+    "setasign/fpdi": "^2.6",
+    "setasign/fpdf": "^1.8"
   },
   "require-dev": {
     "phpunit/phpunit": "^9|^10|^11",
@@ -36,8 +36,9 @@
     "phpstan/phpstan-phpunit": "^1.1"
   },
   "suggest": {
+    "horstoeko/zugferd": "Create Zugferd documents with this merger library",
     "vianetz/signaturportal-api": "Use this library to sign your generated PDF documents.",
-    "zf1/zend-pdf": "Necessary if you want to use Zend_Pdf for merging. By default this package uses the fpdi merger."
+    "tecnickcom/tcpdf": "Necessary if you want to use TCPDF for merging. By default this package uses the fpdf merger."
   },
   "config": {
     "allow-plugins": {

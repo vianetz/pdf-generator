@@ -2,8 +2,6 @@
 declare(strict_types=1);
 
 /**
- * Pdf merger interface class
- *
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
  * The code is distributed under the GPL license.
@@ -23,18 +21,19 @@ namespace Vianetz\Pdf\Model;
 
 use setasign\Fpdi\PdfParser\StreamReader;
 
-interface MergerInterface
+interface MergerInterface extends Pdfable
 {
-    public function getPdfContents(): string;
-
     /** @param string|resource|StreamReader $file */
     public function importPageFromFile($file, int $pageNumber): void;
 
     public function importPageFromPdfString(string $pdfString, int $pageNumber): void;
 
-    public function countPages(string $fileName): int;
+    public function countPages(string $pdfString): int;
 
     public function addPage(): self;
 
+    public function addAttachment(string $fileName): self;
+
+    /** @throws \Vianetz\Pdf\FileNotFoundException */
     public function importBackgroundTemplateFile(string $pdfBackgroundFile): void;
 }

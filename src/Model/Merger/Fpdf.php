@@ -19,20 +19,20 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model\Merger;
 
+use setasign\Fpdi\Fpdi as FpdfFpdi;
 use setasign\Fpdi\PdfParser\StreamReader;
-use setasign\Fpdi\Tcpdf\Fpdi as TcpdfFpdi;
 use Vianetz\Pdf\Model\Config;
 
-final class Fpdi extends AbstractMerger // @todo rename to tcpdf
+class Fpdf extends AbstractMerger
 {
     private const OUTPUT_MODE_STRING = 'S';
     private const OUTPUT_FORMAT_LANDSCAPE = 'L';
     private const OUTPUT_FORMAT_PORTRAIT = 'P';
-    private TcpdfFpdi $fpdiModel;
+    protected FpdfFpdi $fpdiModel;
     private string $orientation = self::OUTPUT_FORMAT_PORTRAIT;
-    private string $paper = 'a4';
+    private string $paper;
 
-    public function __construct(?Config $config = null)
+    public function __construct(?Config $config = null, ?FpdfFpdi $fpdiModel = null)
     {
         $config ??= new Config();
 
@@ -44,13 +44,11 @@ final class Fpdi extends AbstractMerger // @todo rename to tcpdf
 
         $this->paper = $config->getPdfSize();
 
-        $this->fpdiModel = new TcpdfFpdi($this->orientation, 'mm', $this->paper);
+        $this->fpdiModel = $fpdiModel ?? new FpdfFpdi($this->orientation, 'mm', $this->paper);
 
         $this->fpdiModel->SetAuthor($config->getPdfAuthor());
         $this->fpdiModel->SetTitle($config->getPdfTitle());
         $this->fpdiModel->setCreator('https://github.com/vianetz/pdf-generator');
-        $this->fpdiModel->setPrintHeader(false);
-        $this->fpdiModel->setPrintFooter(false);
     }
 
     /**

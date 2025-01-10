@@ -1,13 +1,18 @@
 name: CI
 
-on: [pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - develop
 
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: [ "7.4", "8.0", "8.1", "8.2", "8.3" ]
+        php-version: [ "7.4", "8.0", "8.1", "8.2", "8.3", "8.4" ]
 
     steps:
     - uses: actions/checkout@v4
@@ -20,6 +25,12 @@ jobs:
     - uses: php-actions/composer@v6
       with:
         php_version: ${{ matrix.php-version }}
+
+    - uses: php-actions/composer@v6
+      with:
+        php_version: ${{ matrix.php-version }}
+        command: 'require'
+        args: 'horstoeko/zugferd tecnickcom/tcpdf'
 
     - name: Run PHPUnit tests
       run: vendor/bin/phpunit

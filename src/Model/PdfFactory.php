@@ -6,7 +6,7 @@
  * Usage:
  * 1) Instantiate (optionally with your custom generator class)
  * 2) addDocument($document)
- * 3) getContents() or saveToFile()
+ * 3) toPdf() or saveToFile()
  *
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
@@ -26,17 +26,17 @@
 namespace Vianetz\Pdf\Model;
 
 use Vianetz\Pdf\Model\Generator\Dompdf;
-use Vianetz\Pdf\Model\Merger\Fpdi;
+use Vianetz\Pdf\Model\Merger\Fpdf;
 
 final class PdfFactory
 {
-    public function create(Config $config = null, EventManagerInterface $eventManager = null): Pdf
+    public function create(?Config $config = null, ?EventManagerInterface $eventManager = null): Pdf
     {
         $config ??= new Config();
-        $eventManager ??= new NullEventManager();
+        $eventManager ??= new NoneEventManager();
 
         $generator = new Dompdf($config);
-        $merger = new Fpdi($config);
+        $merger = new Fpdf($config);
 
         return new Pdf($config, $eventManager, $generator, $merger);
     }

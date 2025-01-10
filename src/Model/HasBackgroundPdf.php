@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
@@ -17,16 +19,9 @@
 
 namespace Vianetz\Pdf\Model;
 
-interface PdfDocumentInterface
+interface HasBackgroundPdf
 {
-    /**
-     * @return string
-     */
-    public function getPdfFile();
+    public function getPdfBackgroundFile(): ?string;
 
-    /**
-     * @param string $pdfFile
-     * @return void
-     */
-    public function setPdfFile($pdfFile);
+    public function getPdfBackgroundFileForFirstPage(): ?string;
 }

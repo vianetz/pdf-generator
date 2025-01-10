@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
@@ -15,15 +17,23 @@
  * @license     http://www.gnu.org/licenses/gpl-3.0.txt GNU GENERAL PUBLIC LICENSE
  */
 
-namespace Vianetz\Pdf\Model;
+namespace Vianetz\Pdf\Model\Merger;
 
-final class NullEventManager implements EventManagerInterface
+use horstoeko\zugferd\ZugferdPdfWriter;
+use Vianetz\Pdf\Model\Config;
+
+/** @property ZugferdPdfWriter $fpdiModel */
+final class ZugferdFpdf extends Fpdf
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function dispatch($eventName, array $data = [])
+    public function __construct(?Config $config = null)
     {
-        // do nothing
+        parent::__construct($config, new ZugferdPdfWriter());
+    }
+
+    public function addAttachment(string $fileName): self
+    {
+        $this->fpdiModel->attach($fileName);
+
+        return $this;
     }
 }

@@ -17,8 +17,13 @@ declare(strict_types=1);
  * @license     http://www.gnu.org/licenses/gpl-3.0.txt GNU GENERAL PUBLIC LICENSE
  */
 
-namespace Vianetz\Pdf;
+namespace Vianetz\Pdf\Model;
 
-class Exception extends \Exception
+final class NoneEventManager implements EventManagerInterface
 {
+    /** {@inheritDoc} */
+    public function dispatch(string $eventName, array $data = []): void
+    {
+        // do nothing
+    }
 }

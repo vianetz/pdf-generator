@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
@@ -17,8 +19,6 @@
 
 namespace Vianetz\Pdf\Model\Generator;
 
-use Vianetz\Pdf\Model\DocumentInterface;
-
 /**
  * Known limitations of Dompdf:
  * - colspan is not working properly (table is moved to the top of the page)
@@ -34,16 +34,23 @@ final class Dompdf extends AbstractGenerator
     private \Dompdf\Dompdf $domPdf;
 
     /** @throws \Exception */
-    public function renderPdfDocument(DocumentInterface $documentModel): ?string
+    public function import(string $html): self
     {
+        $this->writeDebugFile($html);
+
         $this->initPdf();
 
-        $this->domPdf->loadHtml($this->getHtmlContentsForDocument($documentModel));
+        $this->domPdf->loadHtml($html);
         $this->domPdf->render();
 
         $this->injectPageCount();
 
-        return $this->domPdf->output();
+        return $this;
+    }
+
+    public function toPdf(): string
+    {
+        return $this->domPdf->output() ?? '';
     }
 
     protected function initPdf(): self
@@ -59,21 +66,6 @@ final class Dompdf extends AbstractGenerator
     }
 
     /**
-     * Return HTML contents for one single document that is later merged with the others.
-     *
-     * @throws \Exception
-     */
-    protected function getHtmlContentsForDocument(DocumentInterface $documentModel): string
-    {
-        $htmlContents = $documentModel->getHtmlContents();
-
-        $htmlContents = $this->replaceSpecialChars($htmlContents);
-        $this->writeDebugFile($htmlContents);
-
-        return $htmlContents;
-    }
-
-    /**
      * @see \Dompdf\Options
      *
      * @return array<string,mixed>
@@ -84,6 +76,7 @@ final class Dompdf extends AbstractGenerator
             'isPhpEnabled' => true,
             'isRemoteEnabled' => true,
             'chroot' => $this->config->getChrootDir(),
+            'fontCache' => $this->config->getTempDir(),
         ];
     }
 

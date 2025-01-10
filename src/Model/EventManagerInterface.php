@@ -1,7 +1,7 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Event manager interface class
- *
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
  * The code is distributed under the GPL license.
@@ -27,9 +27,7 @@ interface EventManagerInterface
      * Calls all observer callbacks registered for this event
      * and multiple observers matching event name pattern
      *
-     * @param string $eventName
      * @param array<mixed,mixed> $data
-     * @return void
      */
-    public function dispatch($eventName, array $data = []);
+    public function dispatch(string $eventName, array $data = []): void;
 }

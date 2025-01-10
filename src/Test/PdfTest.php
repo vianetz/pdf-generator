@@ -22,6 +22,7 @@ namespace Vianetz\Pdf\Test;
 use PHPUnit\Framework\TestCase;
 use Vianetz\Pdf\Model\Config;
 use Vianetz\Pdf\Model\Generator\AbstractGenerator;
+use Vianetz\Pdf\Model\HtmlDocument;
 use Vianetz\Pdf\Model\PdfFactory;
 use Vianetz\Pdf\NoDataException;
 
@@ -29,11 +30,10 @@ final class PdfTest extends TestCase
 {
     private const TMP_DIR = './tmp_dir/';
 
-    private function getDocumentMock(): \Vianetz\Pdf\Model\Document
+    private function getDocumentMock(): HtmlDocument
     {
-        /** @var \Vianetz\Pdf\Model\Document $document */
-        $document = new \Vianetz\Pdf\Model\Document();
-        $document->setHtmlContents('<html><body>This is the <strong>pdf-generator</strong> test!</body></html>');
+        /** @var \Vianetz\Pdf\Model\HtmlDocument $document */
+        $document = new HtmlDocument('<html><body>This is the <strong>pdf-generator</strong> test!</body></html>');
 
         return $document;
     }
@@ -55,7 +55,7 @@ final class PdfTest extends TestCase
     public function testAddOneDocumentIncreasesDocumentCounterByOne(): void
     {
         $pdfMock = $this->getPdfMock();
-        $pdfMock->addDocument($this->getDocumentMock());
+        $pdfMock->add($this->getDocumentMock());
 
         $this->assertEquals(1, $pdfMock->countDocuments());
     }
@@ -63,9 +63,9 @@ final class PdfTest extends TestCase
     public function testAddThreeDocumentsIncreasesDocumentCounterByThree(): void
     {
         $pdfMock = $this->getPdfMock();
-        $pdfMock->addDocument($this->getDocumentMock())
-            ->addDocument($this->getDocumentMock())
-            ->addDocument($this->getDocumentMock());
+        $pdfMock->add($this->getDocumentMock())
+            ->add($this->getDocumentMock())
+            ->add($this->getDocumentMock());
 
         $this->assertEquals(3, $pdfMock->countDocuments());
     }
@@ -73,15 +73,15 @@ final class PdfTest extends TestCase
     public function testGetContentsReturnsExceptionIfNoDocumentsAdded(): void
     {
         $this->expectException(NoDataException::class);
-        $this->getPdfMock()->getContents();
+        $this->getPdfMock()->toPdf();
     }
 
     public function testGetContentsReturnsNonEmptyResult(): void
     {
         $pdfMock = $this->getPdfMock();
-        $pdfMock->addDocument($this->getDocumentMock());
+        $pdfMock->add($this->getDocumentMock());
 
-        $this->assertNotEmpty($pdfMock->getContents());
+        $this->assertNotEmpty($pdfMock->toPdf());
     }
 
     public function testDebugModeGeneratesDebugFile(): void
@@ -91,7 +91,7 @@ final class PdfTest extends TestCase
             ->setTempDir('.');
 
         $pdfMock = $this->getPdfMock($config);
-        $pdfMock->addDocument($this->getDocumentMock())
+        $pdfMock->add($this->getDocumentMock())
             ->render();
         $this->assertFileExists(AbstractGenerator::DEBUG_FILE_NAME);
     }
@@ -111,7 +111,7 @@ final class PdfTest extends TestCase
         $config->setTempDir(self::TMP_DIR);
 
         $pdfMock = $this->getPdfMock($config);
-        $pdfMock->addDocument($this->getDocumentMock())
+        $pdfMock->add($this->getDocumentMock())
             ->render();
 
         $this->assertDirectoryIsNotWritable(self::TMP_DIR);

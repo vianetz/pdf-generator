@@ -1,7 +1,7 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Pdf interface class
- *
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
  * The code is distributed under the GPL license.
@@ -19,20 +19,12 @@
 
 namespace Vianetz\Pdf\Model;
 
-interface PdfInterface
+interface CanSave
 {
     /**
-     * @return string
-     * @throws \Vianetz\Pdf\NoDataException
-     */
-    public function getContents();
-
-    /**
-     * @param string $fileName
-     *
      * @api
      * @return bool true in case of success
      * @throws \Vianetz\Pdf\NoDataException
      */
-    public function saveToFile($fileName);
+    public function saveToFile(string $fileName): bool;
 }
