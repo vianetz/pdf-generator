@@ -19,10 +19,13 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model;
 
+use Vianetz\Pdf\FileNotFoundException;
+
 class PdfDocument implements Pdfable
 {
     protected string $pdfContents;
 
+    /** @throws \Vianetz\Pdf\FileNotFoundException */
     public function __construct(string $pdfFile)
     {
         $this->pdfContents = $this->readFile($pdfFile);
@@ -33,11 +36,16 @@ class PdfDocument implements Pdfable
         return $this->pdfContents;
     }
 
+    /** @throws \Vianetz\Pdf\FileNotFoundException */
     private function readFile(string $pdfFile): string
     {
-        $fileContents = \file_get_contents($pdfFile);
+        if (empty($pdfFile) || ! is_file($pdfFile)) {
+            throw new FileNotFoundException(sprintf('pdf file "%s" does not exist', $pdfFile));
+        }
+
+        $fileContents = @\file_get_contents($pdfFile);
         if ($fileContents === false) {
-            return '';
+            throw new FileNotFoundException(sprintf('pdf file "%s" is not readable', $pdfFile));
         }
 
         return $fileContents;

@@ -95,6 +95,8 @@ class Pdf implements CanSave, Pdfable
     final public function attach(string $file): self
     {
         $this->attachments[] = $file;
+        // Reset cached pdf contents.
+        $this->pdfContents = null;
 
         return $this;
     }
@@ -145,6 +147,9 @@ class Pdf implements CanSave, Pdfable
                 }
             } elseif ($documentInstance instanceof Pdfable) {
                 $pdfContents = $documentInstance->toPdf();
+                if (empty($pdfContents)) {
+                    continue;
+                }
             } else {
                 throw new Exception('invalid document type');
             }

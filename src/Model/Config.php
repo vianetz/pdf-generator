@@ -24,8 +24,10 @@ final class Config
     public const PAPER_ORIENTATION_LANDSCAPE = 'landscape';
     public const PAPER_ORIENTATION_PORTRAIT = 'portrait';
 
-    /** @see \Dompdf\Adapter\CPDF::$PAPER_SIZES */
-    private string $pdfSize = 'a4';
+    private const DEFAULT_PDF_SIZE = 'a4';
+
+    /** Always one of the names in {@see \Vianetz\Pdf\Model\PaperSize} - validated by {@see self::setPdfSize()}. */
+    private string $pdfSize = self::DEFAULT_PDF_SIZE;
     private string $pdfOrientation = self::PAPER_ORIENTATION_PORTRAIT;
     private string $pdfAuthor = '';
     private string $pdfTitle = '';
@@ -73,9 +75,10 @@ final class Config
         return $this->chrootDir;
     }
 
+    /** @throws \Vianetz\Pdf\UnsupportedPaperSizeException */
     public function setPdfSize(string $pdfSize): self
     {
-        $this->pdfSize = $pdfSize;
+        $this->pdfSize = PaperSize::fromName($pdfSize)->toString();
 
         return $this;
     }

@@ -4,12 +4,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+### Added
+- `PaperSize` model that limits the configured paper size to the sizes every pdf library we use knows
+- `UnsupportedPaperSizeException` for paper sizes we do not support
+### Changed
+- **Breaking:** the supported paper sizes are now limited to a3, a4, a5, letter and legal, i.e. those that
+  every pdf library we use knows. `Config::setPdfSize()` validates the given size right away and throws an
+  `UnsupportedPaperSizeException` for any other one - `b5` for example - instead of the size being passed on
+  and aborting with an error from deep inside the merger library. Size names are normalized, so that
+  ` LETTER ` and `letter` are the same size
+### Fixed
+- `PdfDocument` now throws a `FileNotFoundException` if the given pdf file does not exist or is not readable,
+  instead of silently rendering an empty document and failing later with an unrelated pdf parser error
+- Attachments added after a first render are no longer silently dropped - `attach()` now invalidates the
+  cached pdf contents, just like `add()` already did
+- An empty `Pdfable` document no longer causes a pdf parser error but is skipped, so that a document set
+  without any content results in a `NoDataException` as intended
+
 ## [5.0.0] - 2025-01-10
 ### Added
 - Merger for Zugferd PDFs, i.e. PDFs with XML attachments
 ### Changed
 - TCPDF to Fpdf library for merging as default (both libraries supported now)
 - Several public interfaces to support type hints and make purpose clearer
+- The general pdf background file is now used for the first page as well, unless a dedicated background
+  file for the first page is set - this reverses the behaviour introduced in 1.0.3
+- A missing pdf background template file now throws a `FileNotFoundException` instead of being silently
+  ignored, i.e. rendering no longer continues without the background
 ### Removed
 - Deprecated ZendPdf merger  
 
