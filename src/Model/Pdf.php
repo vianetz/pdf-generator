@@ -27,7 +27,7 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf\Model;
 
-use Vianetz\Pdf\Exception;
+use Vianetz\Pdf\InvalidDocumentException;
 use Vianetz\Pdf\Model\Generator\AbstractGenerator;
 use Vianetz\Pdf\NoDataException;
 
@@ -129,7 +129,7 @@ class Pdf implements CanSave, Pdfable
     /**
      * Return merged pdf contents of all documents and save it to single temporary files.
      *
-     * @throws \Vianetz\Pdf\NoDataException|\Vianetz\Pdf\Exception
+     * @throws \Vianetz\Pdf\NoDataException|\Vianetz\Pdf\InvalidDocumentException
      */
     private function renderPdfContentsForAllDocuments(): void
     {
@@ -151,7 +151,7 @@ class Pdf implements CanSave, Pdfable
                     continue;
                 }
             } else {
-                throw new Exception('invalid document type');
+                throw new InvalidDocumentException('invalid document type');
             }
 
             if ($documentInstance instanceof HasBackgroundPdf) {

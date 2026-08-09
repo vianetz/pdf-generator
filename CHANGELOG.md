@@ -9,18 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - `PaperSize` model that limits the configured paper size to the sizes every pdf library we use knows
 - `UnsupportedPaperSizeException` for paper sizes we do not support
 ### Changed
-- **Breaking:** the supported paper sizes are now limited to a3, a4, a5, letter and legal, i.e. those that
-  every pdf library we use knows. `Config::setPdfSize()` validates the given size right away and throws an
-  `UnsupportedPaperSizeException` for any other one - `b5` for example - instead of the size being passed on
-  and aborting with an error from deep inside the merger library. Size names are normalized, so that
-  ` LETTER ` and `letter` are the same size
+- **Breaking:** Supported paper sizes limited to a3, a4, a5, letter and legal - `Config::setPdfSize()`
+  validates and normalizes the given size right away
+- **Breaking:** `Vianetz\Pdf\Exception` is an interface now instead of a base class - catching it is
+  unaffected and covers `FileNotFoundException` as well now
+- Our exceptions extend the SPL exception matching their nature, i.e. `\RuntimeException` for runtime errors
+  and `\InvalidArgumentException` for mistakes in the calling code
+- Mergers that cannot handle attachments throw a `\LogicException` naming the merger
 ### Fixed
-- `PdfDocument` now throws a `FileNotFoundException` if the given pdf file does not exist or is not readable,
-  instead of silently rendering an empty document and failing later with an unrelated pdf parser error
-- Attachments added after a first render are no longer silently dropped - `attach()` now invalidates the
-  cached pdf contents, just like `add()` already did
-- An empty `Pdfable` document no longer causes a pdf parser error but is skipped, so that a document set
-  without any content results in a `NoDataException` as intended
+- `PdfDocument` throws a `FileNotFoundException` for missing or unreadable files instead of rendering an
+  empty document
+- Attachments added after a first render are no longer silently dropped
+- An empty `Pdfable` document results in a `NoDataException` instead of a pdf parser error
 
 ## [5.0.0] - 2025-01-10
 ### Added

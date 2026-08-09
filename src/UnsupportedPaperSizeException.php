@@ -19,6 +19,6 @@ declare(strict_types=1);
 
 namespace Vianetz\Pdf;
 
-class UnsupportedPaperSizeException extends Exception
+class UnsupportedPaperSizeException extends \InvalidArgumentException implements Exception
 {
 }

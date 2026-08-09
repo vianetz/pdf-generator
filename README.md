@@ -24,7 +24,7 @@ $pdf->add($document);
 $pdf->saveToFile('test.pdf');
 ```
 
-### Merge a PDF file and a PDF string into one PDF
+### Merge two PDF files into one PDF
 ```php
 // Load some random PDF contents
 $pdfString = file_get_contents('test1.pdf');
@@ -32,12 +32,12 @@ $pdfString = file_get_contents('test1.pdf');
 // Setup things
 $pdfMerge = \Vianetz\Pdf\Model\PdfMerge::create();
 
-// Do the merge.
+// Do the merge - the second argument puts every page on a background template.
 $pdfMerge->mergePdfString($pdfString, 'background.pdf');
-$pdfMerge->mergePdfFile('test2.pdf');
+$pdfMerge->mergePdfString(file_get_contents('test2.pdf'));
 
 // Save the result PDF to file result.pdf.
-file_put_contents($fileName, $pdfMerge->toPdf());
+file_put_contents('result.pdf', $pdfMerge->toPdf());
 ```
 
 ### Tips & Tricks
