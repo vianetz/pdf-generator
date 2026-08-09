@@ -51,6 +51,12 @@ class Fpdf extends AbstractMerger
         $this->fpdiModel->setCreator('https://github.com/vianetz/pdf-generator');
     }
 
+    /** Only sound for an unused merger, see {@see \Vianetz\Pdf\Model\MergerInterface}. Subclasses must call this. */
+    public function __clone()
+    {
+        $this->fpdiModel = clone $this->fpdiModel;
+    }
+
     /**
      * Import the specified page number from the given file into the current pdf model.
      *

@@ -25,35 +25,18 @@ use Vianetz\Pdf\Model\PdfDocument;
 
 final class PdfDocumentTest extends TestCase
 {
-    private const TMP_DIR = './tmp_dir/';
-
-    /** @var list<string> */
-    private array $tmpFiles = [];
+    use TempFiles;
 
     public function tearDown(): void
     {
         parent::tearDown();
 
-        foreach ($this->tmpFiles as $tmpFile) {
-            @unlink($tmpFile);
-        }
-        $this->tmpFiles = [];
-
-        @rmdir(self::TMP_DIR);
-    }
-
-    private function createTmpFile(string $contents): string
-    {
-        $fileName = (string) tempnam(sys_get_temp_dir(), 'vianetz-pdf-test');
-        file_put_contents($fileName, $contents);
-        $this->tmpFiles[] = $fileName;
-
-        return $fileName;
+        $this->tearDownTempFiles();
     }
 
     public function testExistingFileIsReadIntoTheDocument(): void
     {
-        $fileName = $this->createTmpFile('%PDF-1.4 test contents');
+        $fileName = $this->createTempFile('%PDF-1.4 test contents');
 
         $this->assertEquals('%PDF-1.4 test contents', (new PdfDocument($fileName))->toPdf());
     }
@@ -78,11 +61,11 @@ final class PdfDocumentTest extends TestCase
 
     public function testDirectoryThrowsFileNotFoundException(): void
     {
-        @mkdir(self::TMP_DIR);
+        $dirName = $this->createTempDir();
 
         $this->expectException(FileNotFoundException::class);
 
-        new PdfDocument(self::TMP_DIR);
+        new PdfDocument($dirName);
     }
 
     public function testExceptionMessageContainsTheFileName(): void

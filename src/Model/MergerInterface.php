@@ -21,6 +21,11 @@ namespace Vianetz\Pdf\Model;
 
 use setasign\Fpdi\PdfParser\StreamReader;
 
+/**
+ * A merger is good for one document only - {@see self::toPdf()} closes it. {@see \Vianetz\Pdf\Model\Pdf}
+ * therefore renders into a copy, so implementations must copy mutable object state in `__clone()`, and only
+ * an unused merger may be passed to it - copying does not reopen a closed one.
+ */
 interface MergerInterface extends Pdfable
 {
     /** @param string|resource|StreamReader $file */

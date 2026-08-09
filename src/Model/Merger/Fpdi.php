@@ -53,6 +53,12 @@ final class Fpdi extends AbstractMerger // @todo rename to tcpdf
         $this->fpdiModel->setPrintFooter(false);
     }
 
+    /** Only sound for an unused merger, see {@see \Vianetz\Pdf\Model\MergerInterface}. */
+    public function __clone()
+    {
+        $this->fpdiModel = clone $this->fpdiModel;
+    }
+
     /**
      * Import the specified page number from the given file into the current pdf model.
      *
