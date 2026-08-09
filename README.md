@@ -7,7 +7,7 @@ More information about this PDF API can also be found [on my website](https://ww
 
 ## Usage
 
-### Create PDF document from HTML contents
+### Create PDF document from HTML
 
 ```php
 // Create a new pdf instance.
@@ -24,7 +24,7 @@ $pdf->add($document);
 $pdf->saveToFile('test.pdf');
 ```
 
-### Merge a PDF file and a PDF string into one PDF file
+### Merge a PDF file and a PDF string into one PDF
 ```php
 // Load some random PDF contents
 $pdfString = file_get_contents('test1.pdf');

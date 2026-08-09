@@ -21,16 +21,21 @@ namespace Vianetz\Pdf\Model;
 
 class PdfDocument implements Pdfable
 {
-    protected string $pdfFile;
+    protected string $pdfContents;
 
     public function __construct(string $pdfFile)
     {
-        $this->pdfFile = $pdfFile;
+        $this->pdfContents = $this->readFile($pdfFile);
     }
 
     public function toPdf(): string
     {
-        $fileContents = \file_get_contents($this->pdfFile);
+        return $this->pdfContents;
+    }
+
+    private function readFile(string $pdfFile): string
+    {
+        $fileContents = \file_get_contents($pdfFile);
         if ($fileContents === false) {
             return '';
         }

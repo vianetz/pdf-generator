@@ -1,6 +1,6 @@
 {
   "name": "vianetz/pdf-generator",
-  "description": "A library that supports method for generating PDF documents based on DomPdf and FPDI.",
+  "description": "A library that generates PDF documents from HTML and other PDFs.",
   "type": "library",
   "keywords": [
     "vianetz",
