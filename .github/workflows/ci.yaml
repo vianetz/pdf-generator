@@ -65,5 +65,5 @@ jobs:
     # Static analysis only runs here because it needs every class to resolve, which the suggested packages provide.
     - uses: php-actions/phpstan@v3
       with:
-        path: src/
+        path: src/ tests/
         php_version: ${{ matrix.php-version }}

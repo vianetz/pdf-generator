@@ -17,8 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   code reaching into that merger instance after a render now finds it empty
 - Observers of `vianetz_pdf_document_render_before` / `_after` receive a new `PdfMerge` instance per render,
   so one must not be kept beyond the render it belongs to
+- Tests moved from `src/Test/` to `tests/` and mapped via `autoload-dev`, so the test classes are no
+  longer reachable through the production autoloader
 ### Added
 - Tests for background templates, attachments, the `__PDF_TPC__` placeholder and pdf merging
+### Removed
+- Tests, CI workflow and tooling config are no longer part of the distributed package
 
 ## [6.0.0] - 2026-08-09
 ### Added

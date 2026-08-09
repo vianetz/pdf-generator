@@ -24,6 +24,11 @@
       "Vianetz\\Pdf\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Vianetz\\Pdf\\Test\\": "tests/"
+    }
+  },
   "require": {
     "php": "^7.4|^8",
     "dompdf/dompdf": "^3.0",
