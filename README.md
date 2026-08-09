@@ -1,6 +1,8 @@
 # vianetz Pdf Library
 
-This library offers an easy-to-use API for PDF generation and merging.  
+Generate PDF documents from HTML and merge them into one file - in pure PHP, without a headless browser
+or any other system binary, so it runs wherever your application runs.
+
 Internally it uses the [DomPDF library](https://github.com/dompdf/dompdf) for PDF generation and [FPDI](https://github.com/Setasign/FPDI) for merging.
 
 More information about this PDF API can also be found [on my website](https://www.vianetz.com/en/pdf-invoice-api-magento/).
@@ -35,6 +37,9 @@ $pdf->saveToFile('test.pdf');
 
 Use `$pdf->toPdf()` to get the raw contents instead. Besides `HtmlDocument` you may also add existing
 PDF files via `$pdf->add(new \Vianetz\Pdf\Model\PdfDocument('terms.pdf'))`.
+
+Each document is rendered on its own and the results are merged, so every document keeps its own
+header and footer data.
 
 ### Configuration
 
@@ -81,6 +86,7 @@ file_put_contents('result.pdf', $pdfMerge->toPdf());
 ```
 
 `PdfMerge::create()` optionally takes the merger to use - `Merger\Fpdf` (default) or `Merger\Fpdi` (TCPDF).
+Pages are placed on the configured paper size, so a larger source gets cropped.
 
 ### Attachments (ZUGFeRD / Factur-X)
 
@@ -102,6 +108,19 @@ $pdf->attach('factur-x.xml');
 $pdf->saveToFile('invoice.pdf');
 ```
 
+### Events
+
+Pass an `EventManagerInterface` implementation as second argument to `create()` to hook into the
+pipeline - the default `NoneEventManager` does nothing.
+
+| Event | Dispatched | Data |
+| --- | --- | --- |
+| `vianetz_pdf_document_render_before` | before each document is rendered | `document`, `merger` |
+| `vianetz_pdf_document_render_after` | after each document has been merged | `document`, `merger` |
+| `vianetz_pdf_get_contents` | every time `toPdf()` returns | `contents` |
+
+The `merger` belongs to the render in progress and must not be kept beyond it.
+
 ### Error handling
 
 A missing background template, an unreadable PDF file or an empty document throws rather than producing
@@ -118,6 +137,7 @@ try {
 ### Tips & Tricks
 
 - The string literal `__PDF_TPC__` will be replaced with the total page count
+- Inline PHP and remote resources are enabled in the renderer, so do **not** pass untrusted HTML
 
 ## Frequently Asked Questions
 Please find the Frequently Asked Questions [on my website](https://www.vianetz.com/en/faq).
