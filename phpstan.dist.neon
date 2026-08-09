@@ -1,8 +1,6 @@
 parameters:
-    level: max
+    level: 9
     fileExtensions:
         - php
     paths:
         - src/
-    excludePaths:
-        - src/Model/Merger/Zendpdf.php

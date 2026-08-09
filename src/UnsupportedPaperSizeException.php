@@ -1,7 +1,7 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Pdf Exception Class
- *
  * @section LICENSE
  * This file is created by vianetz <info@vianetz.com>.
  * The code is distributed under the GPL license.
@@ -19,6 +19,6 @@
 
 namespace Vianetz\Pdf;
 
-class NoDataException extends \RuntimeException implements Exception
+class UnsupportedPaperSizeException extends \InvalidArgumentException implements Exception
 {
 }

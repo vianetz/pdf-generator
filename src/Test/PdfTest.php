@@ -22,7 +22,11 @@ namespace Vianetz\Pdf\Test;
 use PHPUnit\Framework\TestCase;
 use Vianetz\Pdf\Model\Config;
 use Vianetz\Pdf\Model\Generator\AbstractGenerator;
+use Vianetz\Pdf\Model\Generator\Dompdf;
 use Vianetz\Pdf\Model\HtmlDocument;
+use Vianetz\Pdf\Model\MergerInterface;
+use Vianetz\Pdf\Model\NoneEventManager;
+use Vianetz\Pdf\Model\Pdfable;
 use Vianetz\Pdf\Model\PdfFactory;
 use Vianetz\Pdf\NoDataException;
 
@@ -115,5 +119,55 @@ final class PdfTest extends TestCase
             ->render();
 
         $this->assertDirectoryIsNotWritable(self::TMP_DIR);
+    }
+
+    public function testDocumentIsRenderedInTheConfiguredPaperSize(): void
+    {
+        $config = new Config();
+        $config->setPdfSize('a3');
+
+        $pdfMock = $this->getPdfMock($config);
+        $pdfMock->add($this->getDocumentMock());
+
+        $this->assertMatchesRegularExpression('/MediaBox\s*\[\s*0\s+0\s+841\.89\s+1190\.55\s*\]/', $pdfMock->toPdf());
+    }
+
+    public function testGetContentsReturnsExceptionIfAddedDocumentIsEmpty(): void
+    {
+        $emptyDocument = new class implements Pdfable {
+            public function toPdf(): string
+            {
+                return '';
+            }
+        };
+
+        $pdfMock = $this->getPdfMock();
+        $pdfMock->add($emptyDocument);
+
+        $this->expectException(NoDataException::class);
+        $pdfMock->toPdf();
+    }
+
+    public function testAttachmentIsAddedIfDocumentHasAlreadyBeenRendered(): void
+    {
+        $config = new Config();
+
+        $merger = $this->createMock(MergerInterface::class);
+        $merger->method('countPages')->willReturn(1);
+        $merger->method('addPage')->willReturnSelf();
+        $merger->method('toPdf')->willReturn('%PDF-1.4');
+        // Without resetting the cached contents on attach() the second render is served from the cache
+        // and the attachment is silently dropped.
+        $merger->expects($this->once())
+            ->method('addAttachment')
+            ->with('attachment.xml')
+            ->willReturnSelf();
+
+        $pdfMock = new \Vianetz\Pdf\Model\Pdf($config, new NoneEventManager(), new Dompdf($config), $merger);
+        $pdfMock->add($this->getDocumentMock());
+        $pdfMock->toPdf();
+
+        $pdfMock->attach('attachment.xml');
+        $pdfMock->toPdf();
     }
 }

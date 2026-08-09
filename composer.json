@@ -1,6 +1,6 @@
 {
   "name": "vianetz/pdf-generator",
-  "description": "A library that supports method for generating PDF documents based on DomPdf and FPDI.",
+  "description": "A library that generates PDF documents from HTML and other PDFs.",
   "type": "library",
   "keywords": [
     "vianetz",
@@ -26,14 +26,14 @@
   },
   "require": {
     "php": "^7.4|^8",
-    "dompdf/dompdf": "^2.0|^3.0",
+    "dompdf/dompdf": "^3.0",
     "setasign/fpdi": "^2.6",
     "setasign/fpdf": "^1.8"
   },
   "require-dev": {
     "phpunit/phpunit": "^9|^10|^11",
-    "phpstan/phpstan": "^1.8",
-    "phpstan/phpstan-phpunit": "^1.1"
+    "phpstan/phpstan": "^2.1",
+    "phpstan/phpstan-phpunit": "^2.0"
   },
   "suggest": {
     "horstoeko/zugferd": "Create Zugferd documents with this merger library",

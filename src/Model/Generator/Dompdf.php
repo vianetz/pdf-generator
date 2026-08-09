@@ -50,7 +50,7 @@ final class Dompdf extends AbstractGenerator
 
     public function toPdf(): string
     {
-        return $this->domPdf->output() ?? '';
+        return $this->domPdf->output();
     }
 
     protected function initPdf(): self

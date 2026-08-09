@@ -89,9 +89,10 @@ final class Fpdi extends AbstractMerger // @todo rename to tcpdf
         return $this;
     }
 
+    /** @throws \LogicException */
     public function addAttachment(string $fileName): self
     {
-        throw new \RuntimeException('not implemented');
+        throw new \LogicException(sprintf('the %s merger cannot add attachments', static::class));
     }
 
     private function createPdfStream(string $pdfString): StreamReader

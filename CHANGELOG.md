@@ -4,12 +4,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [6.0.0] - 2026-08-09
+### Added
+- `PaperSize` model and `UnsupportedPaperSizeException`
+### Changed
+- **Breaking:** Supported paper sizes limited to a3, a4, a5, letter and legal - `Config::setPdfSize()`
+  validates and normalizes the given size right away
+- **Breaking:** `Vianetz\Pdf\Exception` is an interface now instead of a base class - catching it is
+  unaffected and covers `FileNotFoundException` as well now
+- Our exceptions extend the SPL exception matching their nature, i.e. `\RuntimeException` or
+  `\InvalidArgumentException`
+- Mergers that cannot handle attachments throw a `\LogicException`
+### Fixed
+- Missing or unreadable files result in a `FileNotFoundException` instead of an empty document
+- Attachments added after a first render are no longer silently dropped
+- An empty `Pdfable` document results in a `NoDataException` instead of a pdf parser error
+
 ## [5.0.0] - 2025-01-10
 ### Added
 - Merger for Zugferd PDFs, i.e. PDFs with XML attachments
 ### Changed
 - TCPDF to Fpdf library for merging as default (both libraries supported now)
 - Several public interfaces to support type hints and make purpose clearer
+- The general pdf background file is now used for the first page as well, unless a dedicated background
+  file for the first page is set - this reverses the behaviour introduced in 1.0.3
+- A missing pdf background template file now throws a `FileNotFoundException` instead of being silently
+  ignored, i.e. rendering no longer continues without the background
 ### Removed
 - Deprecated ZendPdf merger  
 
