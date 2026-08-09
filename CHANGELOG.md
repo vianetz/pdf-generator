@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [6.1.0] - 2026-08-09
+### Added
+- Tests for background templates, attachments, the `__PDF_TPC__` placeholder and pdf merging
 ### Fixed
 - Adding a document or an attachment after a first render no longer fails with "FPDF error: The document
   is closed" - every render now merges into an unused copy of the merger instead of the one the previous
@@ -20,8 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Tests moved from `src/Test/` to `tests/` and mapped via `autoload-dev`, so the test classes are no
   longer reachable through the production autoloader
 - Tests write to the system temp dir instead of the working directory, and clean up after themselves
-### Added
-- Tests for background templates, attachments, the `__PDF_TPC__` placeholder and pdf merging
 ### Removed
 - Tests, CI workflow and tooling config are no longer part of the distributed package
 
