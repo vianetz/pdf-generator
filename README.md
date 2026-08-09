@@ -5,6 +5,15 @@ Internally it uses the [DomPDF library](https://github.com/dompdf/dompdf) for PD
 
 More information about this PDF API can also be found [on my website](https://www.vianetz.com/en/pdf-invoice-api-magento/).
 
+## Installation
+
+```bash
+composer require vianetz/pdf-generator
+```
+
+Requires PHP 7.4 or later. Optionally install `horstoeko/zugferd` for attachments (ZUGFeRD / Factur-X)
+or `tecnickcom/tcpdf` for the TCPDF based merger.
+
 ## Usage
 
 ### Create PDF document from HTML
@@ -24,6 +33,37 @@ $pdf->add($document);
 $pdf->saveToFile('test.pdf');
 ```
 
+Use `$pdf->toPdf()` to get the raw contents instead. Besides `HtmlDocument` you may also add existing
+PDF files via `$pdf->add(new \Vianetz\Pdf\Model\PdfDocument('terms.pdf'))`.
+
+### Configuration
+
+```php
+$config = (new \Vianetz\Pdf\Model\Config())
+    ->setPdfSize('a4')
+    ->setPdfOrientation(\Vianetz\Pdf\Model\Config::PAPER_ORIENTATION_LANDSCAPE)
+    ->setPdfAuthor('vianetz')
+    ->setPdfTitle('Invoice 1000001')
+    ->setIsDebugMode(true);
+
+$pdf = \Vianetz\Pdf\Model\PdfFactory::general()->create($config);
+```
+
+Supported paper sizes are `a3`, `a4`, `a5`, `letter` and `legal` - any other size throws an
+`UnsupportedPaperSizeException`. See `Config` for further settings (temp dir, chroot dir).
+
+### Background templates
+
+Each page can be stamped onto a template PDF, e.g. your letterhead:
+
+```php
+$document = new \Vianetz\Pdf\Model\HtmlDocument(
+    '<strong>Hello</strong> World!',
+    'background.pdf',           // used for every page
+    'background-first-page.pdf' // optional, used for the first page instead
+);
+```
+
 ### Merge two PDF files into one PDF
 ```php
 // Load some random PDF contents
@@ -38,6 +78,41 @@ $pdfMerge->mergePdfString(file_get_contents('test2.pdf'));
 
 // Save the result PDF to file result.pdf.
 file_put_contents('result.pdf', $pdfMerge->toPdf());
+```
+
+`PdfMerge::create()` optionally takes the merger to use - `Merger\Fpdf` (default) or `Merger\Fpdi` (TCPDF).
+
+### Attachments (ZUGFeRD / Factur-X)
+
+`ZugferdFpdf` is the only merger supporting attachments, all others throw a `\LogicException`. As the
+factory always wires up the default merger you need to compose the pdf yourself:
+
+```php
+$config = new \Vianetz\Pdf\Model\Config();
+
+$pdf = new \Vianetz\Pdf\Model\Pdf(
+    $config,
+    new \Vianetz\Pdf\Model\NoneEventManager(),
+    new \Vianetz\Pdf\Model\Generator\Dompdf($config),
+    new \Vianetz\Pdf\Model\Merger\ZugferdFpdf($config)
+);
+
+$pdf->add(new \Vianetz\Pdf\Model\HtmlDocument('<strong>Invoice</strong> 1000001'));
+$pdf->attach('factur-x.xml');
+$pdf->saveToFile('invoice.pdf');
+```
+
+### Error handling
+
+A missing background template, an unreadable PDF file or an empty document throws rather than producing
+a partial PDF. All exceptions implement `\Vianetz\Pdf\Exception`, so one catch block covers them all:
+
+```php
+try {
+    $pdf->saveToFile('test.pdf');
+} catch (\Vianetz\Pdf\Exception $e) {
+    // NoDataException, FileNotFoundException, InvalidDocumentException, UnsupportedPaperSizeException
+}
 ```
 
 ### Tips & Tricks
