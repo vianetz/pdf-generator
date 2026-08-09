@@ -34,7 +34,8 @@ use Vianetz\Pdf\NoDataException;
 class Pdf implements CanSave, Pdfable
 {
     private AbstractGenerator $generator;
-    private PdfMerge $pdfMerge;
+    /** Never merged into, every render works on a copy - see {@see self::toPdf()}. */
+    private MergerInterface $merger;
     private ?string $pdfContents = null;
 
     /** @var list<\Vianetz\Pdf\Model\Pdfable|\Vianetz\Pdf\Model\Htmlable> */
@@ -52,7 +53,7 @@ class Pdf implements CanSave, Pdfable
         MergerInterface $merger
     ) {
         $this->generator = $generator;
-        $this->pdfMerge = PdfMerge::create($merger);
+        $this->merger = $merger;
         $this->config = $config;
         $this->eventManager = $eventManager;
     }
@@ -61,9 +62,13 @@ class Pdf implements CanSave, Pdfable
     final public function toPdf(): string
     {
         if ($this->pdfContents === null) {
-            $this->renderPdfContentsForAllDocuments();
-            $this->renderAttachments();
-            $this->pdfContents = $this->pdfMerge->toPdf();
+            // The pdf libraries close their document on output, so a merger is good for one render only.
+            $pdfMerge = PdfMerge::create(clone $this->merger);
+
+            $this->renderPdfContentsForAllDocuments($pdfMerge);
+            $this->renderAttachments($pdfMerge);
+
+            $this->pdfContents = $pdfMerge->toPdf();
         }
 
         $this->eventManager->dispatch('vianetz_pdf_get_contents', ['contents' => $this->pdfContents]);
@@ -131,13 +136,13 @@ class Pdf implements CanSave, Pdfable
      *
      * @throws \Vianetz\Pdf\NoDataException|\Vianetz\Pdf\InvalidDocumentException
      */
-    private function renderPdfContentsForAllDocuments(): void
+    private function renderPdfContentsForAllDocuments(PdfMerge $pdfMerge): void
     {
         $hasData = false;
         foreach ($this->documents as $documentInstance) {
             $this->eventManager->dispatch('vianetz_pdf_document_render_before', [
                 'document' => $documentInstance,
-                'merger' => $this->pdfMerge,
+                'merger' => $pdfMerge,
             ]);
 
             if ($documentInstance instanceof Htmlable) {
@@ -155,16 +160,16 @@ class Pdf implements CanSave, Pdfable
             }
 
             if ($documentInstance instanceof HasBackgroundPdf) {
-                $this->pdfMerge->mergePdfString($pdfContents, $documentInstance->getPdfBackgroundFile(), $documentInstance->getPdfBackgroundFileForFirstPage());
+                $pdfMerge->mergePdfString($pdfContents, $documentInstance->getPdfBackgroundFile(), $documentInstance->getPdfBackgroundFileForFirstPage());
             } else {
-                $this->pdfMerge->mergePdfString($pdfContents);
+                $pdfMerge->mergePdfString($pdfContents);
             }
 
             $hasData = true;
 
             $this->eventManager->dispatch('vianetz_pdf_document_render_after', [
                 'document' => $documentInstance,
-                'merger' => $this->pdfMerge,
+                'merger' => $pdfMerge,
             ]);
         }
 
@@ -173,10 +178,10 @@ class Pdf implements CanSave, Pdfable
         }
     }
 
-    private function renderAttachments(): void
+    private function renderAttachments(PdfMerge $pdfMerge): void
     {
         foreach ($this->attachments as $fileName) {
-            $this->pdfMerge->addAttachment($fileName);
+            $pdfMerge->addAttachment($fileName);
         }
     }
 }

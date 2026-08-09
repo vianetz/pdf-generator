@@ -20,10 +20,14 @@ declare(strict_types=1);
 namespace Vianetz\Pdf\Test;
 
 use PHPUnit\Framework\TestCase;
+use Vianetz\Pdf\InvalidDocumentException;
 use Vianetz\Pdf\Model\Config;
+use Vianetz\Pdf\Model\EventManagerInterface;
 use Vianetz\Pdf\Model\Generator\AbstractGenerator;
 use Vianetz\Pdf\Model\Generator\Dompdf;
 use Vianetz\Pdf\Model\HtmlDocument;
+use Vianetz\Pdf\Model\Merger\Fpdf;
+use Vianetz\Pdf\Model\Merger\Fpdi;
 use Vianetz\Pdf\Model\MergerInterface;
 use Vianetz\Pdf\Model\NoneEventManager;
 use Vianetz\Pdf\Model\Pdfable;
@@ -34,12 +38,20 @@ final class PdfTest extends TestCase
 {
     private const TMP_DIR = './tmp_dir/';
 
+    /** @var list<string> */
+    private array $tmpFiles = [];
+
     private function getDocumentMock(): HtmlDocument
     {
         /** @var \Vianetz\Pdf\Model\HtmlDocument $document */
         $document = new HtmlDocument('<html><body>This is the <strong>pdf-generator</strong> test!</body></html>');
 
         return $document;
+    }
+
+    private function getDocumentWithMarker(string $marker): HtmlDocument
+    {
+        return new HtmlDocument('<html><body>' . $marker . '</body></html>');
     }
 
     private function getPdfMock(?Config $config = null): \Vianetz\Pdf\Model\Pdf
@@ -54,6 +66,11 @@ final class PdfTest extends TestCase
         // Remove debug file if existent
         @unlink(\Vianetz\Pdf\Model\Generator\AbstractGenerator::DEBUG_FILE_NAME);
         @rmdir(self::TMP_DIR);
+
+        foreach ($this->tmpFiles as $tmpFile) {
+            @unlink($tmpFile);
+        }
+        $this->tmpFiles = [];
     }
 
     public function testAddOneDocumentIncreasesDocumentCounterByOne(): void
@@ -169,5 +186,203 @@ final class PdfTest extends TestCase
 
         $pdfMock->attach('attachment.xml');
         $pdfMock->toPdf();
+    }
+
+    /** Re-rendering must not reuse the previous merger - that failed with "FPDF error: The document is closed". */
+    public function testDocumentAddedAfterAFirstRenderIsIncludedInTheSecondRender(): void
+    {
+        $pdfMock = $this->getPdfMock();
+        $pdfMock->add($this->getDocumentWithMarker('FIRST-DOCUMENT'));
+        $firstRender = $pdfMock->toPdf();
+
+        $pdfMock->add($this->getDocumentWithMarker('SECOND-DOCUMENT'));
+        $secondRender = $pdfMock->toPdf();
+
+        $this->assertEquals(1, PdfContents::pageCount($firstRender));
+        $this->assertEquals(2, PdfContents::pageCount($secondRender), 'the document added after the first render is missing');
+        $this->assertStringContainsString('FIRST-DOCUMENT', PdfContents::text($secondRender));
+        $this->assertStringContainsString('SECOND-DOCUMENT', PdfContents::text($secondRender));
+    }
+
+    /** Every render starts from scratch, so earlier documents must not show up twice. */
+    public function testRepeatedRendersDoNotAccumulatePages(): void
+    {
+        $pdfMock = $this->getPdfMock();
+
+        $pdfMock->add($this->getDocumentMock());
+        $pdfMock->toPdf();
+        $pdfMock->add($this->getDocumentMock());
+        $pdfMock->toPdf();
+        $pdfMock->add($this->getDocumentMock());
+
+        $this->assertEquals(3, PdfContents::pageCount($pdfMock->toPdf()));
+    }
+
+    /** Without a mutation in between the second render is served from the cache and merges nothing. */
+    public function testRenderingTwiceWithoutChangesIsServedFromTheCache(): void
+    {
+        $config = new Config();
+
+        $merger = $this->createMock(MergerInterface::class);
+        $merger->method('countPages')->willReturn(1);
+        $merger->method('addPage')->willReturnSelf();
+        $merger->method('toPdf')->willReturn('%PDF-1.4');
+        $merger->expects($this->once())->method('importPageFromPdfString');
+
+        $pdfMock = new \Vianetz\Pdf\Model\Pdf($config, new NoneEventManager(), new Dompdf($config), $merger);
+        $pdfMock->add($this->getDocumentMock());
+
+        $this->assertEquals($pdfMock->toPdf(), $pdfMock->toPdf());
+    }
+
+    /** Re-rendering produces the same document, not a longer one. */
+    public function testRenderingAgainAfterAMutationIsStableForTheUnchangedDocuments(): void
+    {
+        $pdfMock = $this->getPdfMock();
+        $pdfMock->add($this->getDocumentWithMarker('FIRST-DOCUMENT'));
+        $pdfMock->toPdf();
+        $pdfMock->add($this->getDocumentWithMarker('SECOND-DOCUMENT'));
+
+        $referenceMock = $this->getPdfMock();
+        $referenceMock->add($this->getDocumentWithMarker('FIRST-DOCUMENT'))
+            ->add($this->getDocumentWithMarker('SECOND-DOCUMENT'));
+
+        $this->assertEquals(
+            PdfContents::pageCount($referenceMock->toPdf()),
+            PdfContents::pageCount($pdfMock->toPdf())
+        );
+    }
+
+    /** The same check for the tcpdf merger, whose destructor makes it the riskiest clone target. */
+    public function testDocumentAddedAfterAFirstRenderIsIncludedWhenMergingWithTcpdf(): void
+    {
+        if (! class_exists(\TCPDF::class)) {
+            self::markTestSkipped('the suggested package tecnickcom/tcpdf is not installed');
+        }
+
+        $config = new Config();
+        $pdfMock = new \Vianetz\Pdf\Model\Pdf($config, new NoneEventManager(), new Dompdf($config), new Fpdi($config));
+
+        $pdfMock->add($this->getDocumentWithMarker('FIRST-DOCUMENT'));
+        $this->assertEquals(1, PdfContents::pageCount($pdfMock->toPdf()));
+
+        $pdfMock->add($this->getDocumentWithMarker('SECOND-DOCUMENT'));
+        $this->assertEquals(2, PdfContents::pageCount($pdfMock->toPdf()));
+    }
+
+    public function testMergerGivenToTheConstructorIsNotConsumedByARender(): void
+    {
+        $config = new Config();
+        $merger = new Fpdf($config);
+
+        $pdfMock = new \Vianetz\Pdf\Model\Pdf($config, new NoneEventManager(), new Dompdf($config), $merger);
+        $pdfMock->add($this->getDocumentMock());
+        $pdfMock->toPdf();
+
+        // The merger we handed in stays untouched and may still be used for a document of its own.
+        $merger->addPage();
+        $this->assertEquals(1, PdfContents::pageCount($merger->toPdf()));
+    }
+
+    /** {@see PdfContents::text()} cannot tell the pages apart, so this checks no document got lost, not where it is. */
+    public function testEveryDocumentGetsItsOwnPageAndKeepsItsContents(): void
+    {
+        $pdfMock = $this->getPdfMock();
+        $pdfMock->add($this->getDocumentWithMarker('DOCUMENT-ONE'))
+            ->add($this->getDocumentWithMarker('DOCUMENT-TWO'))
+            ->add($this->getDocumentWithMarker('DOCUMENT-THREE'));
+
+        $pdfContents = $pdfMock->toPdf();
+
+        $this->assertEquals(3, PdfContents::pageCount($pdfContents));
+        foreach (['DOCUMENT-ONE', 'DOCUMENT-TWO', 'DOCUMENT-THREE'] as $marker) {
+            $this->assertStringContainsString($marker, PdfContents::text($pdfContents));
+        }
+    }
+
+    public function testMultiPageDocumentKeepsAllOfItsPages(): void
+    {
+        $html = '<html><body>'
+            . '<div style="page-break-after: always;">PAGE-ONE</div>'
+            . '<div style="page-break-after: always;">PAGE-TWO</div>'
+            . '<div>PAGE-THREE</div>'
+            . '</body></html>';
+
+        $pdfMock = $this->getPdfMock();
+        $pdfMock->add(new HtmlDocument($html));
+
+        $this->assertEquals(3, PdfContents::pageCount($pdfMock->toPdf()));
+    }
+
+    public function testSaveToFileWritesTheRenderedContents(): void
+    {
+        $fileName = (string) tempnam(sys_get_temp_dir(), 'vianetz-pdf-test');
+        $this->tmpFiles[] = $fileName;
+
+        $pdfMock = $this->getPdfMock();
+        $pdfMock->add($this->getDocumentMock());
+
+        $this->assertTrue($pdfMock->saveToFile($fileName));
+        $this->assertStringEqualsFile($fileName, $pdfMock->toPdf());
+    }
+
+    public function testSaveToFileReturnsFalseIfTheFileCannotBeWritten(): void
+    {
+        $pdfMock = $this->getPdfMock();
+        $pdfMock->add($this->getDocumentMock());
+
+        $this->assertFalse($pdfMock->saveToFile(__DIR__ . '/this-directory-does-not-exist/test.pdf'));
+    }
+
+    public function testInvalidDocumentTypeThrowsInvalidDocumentException(): void
+    {
+        $pdfMock = $this->getPdfMock();
+        // Anything that is neither Htmlable nor Pdfable is rejected - but only once it is rendered.
+        /** @phpstan-ignore argument.type */
+        $pdfMock->add(new \stdClass());
+
+        $this->expectException(InvalidDocumentException::class);
+
+        $pdfMock->toPdf();
+    }
+
+    public function testGetConfigReturnsTheConfigTheInstanceWasCreatedWith(): void
+    {
+        $config = new Config();
+
+        $this->assertSame($config, $this->getPdfMock($config)->getConfig());
+    }
+
+    public function testEventsAreDispatchedForEveryDocumentAndForTheContents(): void
+    {
+        $eventManager = new class implements EventManagerInterface {
+            /** @var list<string> */
+            private array $dispatchedEvents = [];
+
+            /** {@inheritDoc} */
+            public function dispatch(string $eventName, array $data = []): void
+            {
+                $this->dispatchedEvents[] = $eventName;
+            }
+
+            /** @return list<string> */
+            public function getDispatchedEvents(): array
+            {
+                return $this->dispatchedEvents;
+            }
+        };
+
+        $config = new Config();
+        $pdfMock = new \Vianetz\Pdf\Model\Pdf($config, $eventManager, new Dompdf($config), new Fpdf($config));
+        $pdfMock->add($this->getDocumentMock())->add($this->getDocumentMock());
+        $pdfMock->toPdf();
+
+        $this->assertEquals([
+            'vianetz_pdf_document_render_before',
+            'vianetz_pdf_document_render_after',
+            'vianetz_pdf_document_render_before',
+            'vianetz_pdf_document_render_after',
+            'vianetz_pdf_get_contents',
+        ], $eventManager->getDispatchedEvents());
     }
 }

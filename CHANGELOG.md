@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+### Fixed
+- Adding a document or an attachment after a first render no longer fails with "FPDF error: The document
+  is closed" - every render now merges into an unused copy of the merger instead of the one the previous
+  render has already closed. The 6.0.0 fix only reset the cached contents, which made the second render
+  replay all documents into the exhausted merger.
+### Changed
+- Mergers that keep mutable state in object properties have to implement `__clone()` - the built-in mergers
+  do, custom implementations of `MergerInterface` need to follow, see the interface documentation
+- The merger passed to `Pdf::__construct()` is no longer written to, as every render works on a copy of it -
+  code reaching into that merger instance after a render now finds it empty
+- Observers of `vianetz_pdf_document_render_before` / `_after` receive a new `PdfMerge` instance per render,
+  so one must not be kept beyond the render it belongs to
+### Added
+- Tests for background templates, attachments, the `__PDF_TPC__` placeholder and pdf merging
+
 ## [6.0.0] - 2026-08-09
 ### Added
 - `PaperSize` model and `UnsupportedPaperSizeException`
