@@ -8,7 +8,9 @@ on:
       - develop
 
 jobs:
+  # The suggested packages are optional, so this is what most consumers actually install.
   test:
+    name: Tests (PHP ${{ matrix.php-version }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -16,7 +18,31 @@ jobs:
         php-version: [ "7.4", "8.0", "8.1", "8.2", "8.3", "8.4", "8.5" ]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+
+    - uses: php-actions/composer@v6
+      with:
+        php_version: ${{ matrix.php-version }}
+
+    - name: Run PHPUnit tests
+      run: vendor/bin/phpunit
+
+  # The suggested packages require a more recent php version than we do ourselves, hence the shorter matrix.
+  test-with-suggested-packages:
+    name: Tests with suggested packages (PHP ${{ matrix.php-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: [ "8.1", "8.2", "8.3", "8.4", "8.5" ]
+
+    steps:
+    - uses: actions/checkout@v7
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -36,6 +62,7 @@ jobs:
     - name: Run PHPUnit tests
       run: vendor/bin/phpunit
 
+    # Static analysis only runs here because it needs every class to resolve, which the suggested packages provide.
     - uses: php-actions/phpstan@v3
       with:
         path: src/
