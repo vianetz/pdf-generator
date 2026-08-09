@@ -45,9 +45,8 @@
     "vianetz/signaturportal-api": "Use this library to sign your generated PDF documents.",
     "tecnickcom/tcpdf": "Necessary if you want to use TCPDF for merging. By default this package uses the fpdf merger."
   },
-  "config": {
-    "allow-plugins": {
-      "ocramius/package-versions": true
-    }
+  "scripts": {
+    "test": "phpunit",
+    "stan": "phpstan analyse -c phpstan.dist.neon"
   }
 }
