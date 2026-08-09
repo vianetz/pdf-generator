@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   so one must not be kept beyond the render it belongs to
 - Tests moved from `src/Test/` to `tests/` and mapped via `autoload-dev`, so the test classes are no
   longer reachable through the production autoloader
+- Tests write to the system temp dir instead of the working directory, and clean up after themselves
 ### Added
 - Tests for background templates, attachments, the `__PDF_TPC__` placeholder and pdf merging
 ### Removed

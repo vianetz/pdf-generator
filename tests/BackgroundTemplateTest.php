@@ -30,26 +30,21 @@ use Vianetz\Pdf\Model\PdfMerge;
 /** Stamping every page onto a template pdf, i.e. the letterhead use case. */
 final class BackgroundTemplateTest extends TestCase
 {
-    private const PDF_STRING = '%PDF-1.4 does not matter, the merger is mocked';
+    use TempFiles;
 
-    /** @var list<string> */
-    private array $tmpFiles = [];
+    private const PDF_STRING = '%PDF-1.4 does not matter, the merger is mocked';
 
     public function tearDown(): void
     {
         parent::tearDown();
 
-        foreach ($this->tmpFiles as $tmpFile) {
-            @unlink($tmpFile);
-        }
-        $this->tmpFiles = [];
+        $this->tearDownTempFiles();
     }
 
     /** Renders a single page pdf containing the marker and returns the file it was written to. */
     private function createTemplateFile(string $marker): string
     {
-        $fileName = (string) tempnam(sys_get_temp_dir(), 'vianetz-pdf-test-template');
-        $this->tmpFiles[] = $fileName;
+        $fileName = $this->createTempFile();
 
         $pdf = PdfFactory::general()->create();
         $pdf->add(new HtmlDocument('<html><body>' . $marker . '</body></html>'));

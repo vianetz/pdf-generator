@@ -35,19 +35,15 @@ use Vianetz\Pdf\Model\Pdf;
  */
 final class AttachmentTest extends TestCase
 {
-    private const XML_CONTENTS = '<?xml version="1.0" encoding="UTF-8"?><CrossIndustryInvoice/>';
+    use TempFiles;
 
-    /** @var list<string> */
-    private array $tmpFiles = [];
+    private const XML_CONTENTS = '<?xml version="1.0" encoding="UTF-8"?><CrossIndustryInvoice/>';
 
     public function tearDown(): void
     {
         parent::tearDown();
 
-        foreach ($this->tmpFiles as $tmpFile) {
-            @unlink($tmpFile);
-        }
-        $this->tmpFiles = [];
+        $this->tearDownTempFiles();
     }
 
     private function requireZugferdPackage(): void
@@ -59,15 +55,7 @@ final class AttachmentTest extends TestCase
 
     private function createXmlFile(): string
     {
-        // tempnam() creates the file it returns, so that one needs cleaning up as well.
-        $tempFileName = (string) tempnam(sys_get_temp_dir(), 'vianetz-pdf-test-attachment');
-        $fileName = $tempFileName . '.xml';
-
-        file_put_contents($fileName, self::XML_CONTENTS);
-        $this->tmpFiles[] = $tempFileName;
-        $this->tmpFiles[] = $fileName;
-
-        return $fileName;
+        return $this->createTempFile(self::XML_CONTENTS, 'factur-x.xml');
     }
 
     private function createPdf(string $marker = 'INVOICE-MARKER'): Pdf

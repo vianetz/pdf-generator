@@ -36,10 +36,7 @@ use Vianetz\Pdf\NoDataException;
 
 final class PdfTest extends TestCase
 {
-    private const TMP_DIR = './tmp_dir/';
-
-    /** @var list<string> */
-    private array $tmpFiles = [];
+    use TempFiles;
 
     private function getDocumentMock(): HtmlDocument
     {
@@ -63,14 +60,7 @@ final class PdfTest extends TestCase
     {
         parent::tearDown();
 
-        // Remove debug file if existent
-        @unlink(\Vianetz\Pdf\Model\Generator\AbstractGenerator::DEBUG_FILE_NAME);
-        @rmdir(self::TMP_DIR);
-
-        foreach ($this->tmpFiles as $tmpFile) {
-            @unlink($tmpFile);
-        }
-        $this->tmpFiles = [];
+        $this->tearDownTempFiles();
     }
 
     public function testAddOneDocumentIncreasesDocumentCounterByOne(): void
@@ -107,14 +97,31 @@ final class PdfTest extends TestCase
 
     public function testDebugModeGeneratesDebugFile(): void
     {
+        $tempDir = $this->createTempDir();
+
         $config = new Config();
         $config->setIsDebugMode(true)
-            ->setTempDir('.');
+            ->setTempDir($tempDir);
 
         $pdfMock = $this->getPdfMock($config);
         $pdfMock->add($this->getDocumentMock())
             ->render();
-        $this->assertFileExists(AbstractGenerator::DEBUG_FILE_NAME);
+
+        $this->assertFileExists($tempDir . DIRECTORY_SEPARATOR . AbstractGenerator::DEBUG_FILE_NAME);
+    }
+
+    public function testNoDebugFileIsWrittenIfDebugModeIsOff(): void
+    {
+        $tempDir = $this->createTempDir();
+
+        $config = new Config();
+        $config->setTempDir($tempDir);
+
+        $pdfMock = $this->getPdfMock($config);
+        $pdfMock->add($this->getDocumentMock())
+            ->render();
+
+        $this->assertFileDoesNotExist($tempDir . DIRECTORY_SEPARATOR . AbstractGenerator::DEBUG_FILE_NAME);
     }
 
     public function testConfigTempDirMayNotBeNull(): void
@@ -124,18 +131,27 @@ final class PdfTest extends TestCase
         $this->assertNotEmpty($config->getTempDir());
     }
 
+    /**
+     * A temp dir that cannot be written to must not stop a document from being rendered - the debug file
+     * and the font cache are best effort.
+     *
+     * The unwritable path is one that does not exist rather than one made unwritable by its mode, because
+     * root ignores the mode bits and would silently turn this into a test of nothing.
+     */
     public function testNoExceptionIfTempDirNotWritable(): void
     {
-        @mkdir(self::TMP_DIR, 0000);
+        $unwritablePath = $this->unwritablePath();
 
         $config = new Config();
-        $config->setTempDir(self::TMP_DIR);
+        $config->setIsDebugMode(true)
+            ->setTempDir($unwritablePath);
 
         $pdfMock = $this->getPdfMock($config);
-        $pdfMock->add($this->getDocumentMock())
-            ->render();
+        $pdfMock->add($this->getDocumentMock());
 
-        $this->assertDirectoryIsNotWritable(self::TMP_DIR);
+        // Guard the premise - assertDirectoryIsNotWritable() cannot be used, it requires the directory to exist.
+        $this->assertFalse(is_writable($unwritablePath));
+        $this->assertNotEmpty($pdfMock->render());
     }
 
     public function testDocumentIsRenderedInTheConfiguredPaperSize(): void
@@ -316,8 +332,7 @@ final class PdfTest extends TestCase
 
     public function testSaveToFileWritesTheRenderedContents(): void
     {
-        $fileName = (string) tempnam(sys_get_temp_dir(), 'vianetz-pdf-test');
-        $this->tmpFiles[] = $fileName;
+        $fileName = $this->createTempFile();
 
         $pdfMock = $this->getPdfMock();
         $pdfMock->add($this->getDocumentMock());
